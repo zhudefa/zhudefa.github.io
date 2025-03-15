@@ -124,6 +124,40 @@
                 radial-gradient(circle at 75% 75%, rgba(112, 0, 255, 0.1) 0%, transparent 50%);
         }
         
+        /* Canvas container for network animation */
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            pointer-events: none;
+        }
+        
+        canvas {
+            display: block;
+        }
+        
+        /* Make sections semi-transparent with blur effect */
+        section {
+            backdrop-filter: blur(5px);
+            background-color: rgba(248, 249, 250, 0.8);
+        }
+        
+        [data-theme="dark"] section {
+            background-color: rgba(30, 30, 30, 0.8);
+        }
+        
+        .publication-card {
+            backdrop-filter: blur(5px);
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+        
+        [data-theme="dark"] .publication-card {
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+        
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -168,6 +202,7 @@
             height: 100%;
             z-index: -1;
             overflow: hidden;
+            pointer-events: none;
         }
         
         .particle {
@@ -673,6 +708,11 @@
     </style>
 </head>
 <body>
+    <!-- Canvas container for network animation -->
+    <div id="canvas-container">
+        <canvas id="nodes-canvas"></canvas>
+    </div>
+    
     <!-- Theme toggle button -->
     <div class="theme-toggle" id="theme-toggle">
         <i class="fas fa-moon"></i>
@@ -779,11 +819,32 @@
     </div>
     
     <script>
+        // Canvas and animation variables
+        let canvas, ctx;
+        let nodes = [];
+        let animationFrameId;
+        let mouseNode = {
+            x: undefined,
+            y: undefined,
+            size: 0,
+            isActive: false
+        };
+        let colors = {
+            primary: '',
+            secondary: '',
+            accent: '',
+            background: ''
+        };
+        
         // Theme toggle functionality
         document.addEventListener('DOMContentLoaded', function() {
             const themeToggle = document.getElementById('theme-toggle');
             const htmlElement = document.documentElement;
             const themeIcon = themeToggle.querySelector('i');
+            
+            // Setup canvas
+            canvas = document.getElementById('nodes-canvas');
+            ctx = canvas.getContext('2d');
             
             // Check for saved theme preference
             const savedTheme = localStorage.getItem('theme');
@@ -791,6 +852,40 @@
                 htmlElement.setAttribute('data-theme', savedTheme);
                 updateThemeIcon(savedTheme);
             }
+            
+            // Initialize the network animation
+            updateColors();
+            resizeCanvas();
+            initNodes();
+            animate();
+            
+            // Handle mouse/touch interaction for network animation
+            canvas.addEventListener('mousemove', function(e) {
+                mouseNode.x = e.clientX;
+                mouseNode.y = e.clientY;
+                mouseNode.isActive = true;
+            });
+            
+            canvas.addEventListener('mouseleave', function() {
+                mouseNode.isActive = false;
+            });
+            
+            canvas.addEventListener('touchmove', function(e) {
+                e.preventDefault();
+                mouseNode.x = e.touches[0].clientX;
+                mouseNode.y = e.touches[0].clientY;
+                mouseNode.isActive = true;
+            });
+            
+            canvas.addEventListener('touchend', function() {
+                mouseNode.isActive = false;
+            });
+            
+            // Handle window resize for canvas
+            window.addEventListener('resize', function() {
+                resizeCanvas();
+                initNodes();
+            });
             
             // Toggle theme on click
             themeToggle.addEventListener('click', function() {
@@ -800,6 +895,9 @@
                 htmlElement.setAttribute('data-theme', newTheme);
                 localStorage.setItem('theme', newTheme);
                 updateThemeIcon(newTheme);
+                
+                // Update colors for network animation
+                updateColors();
                 
                 // Regenerate particles for the new theme
                 regenerateParticles();
@@ -845,6 +943,172 @@
                 }, 2000);
             });
         });
+        
+        // Network animation functions
+        function updateColors() {
+            const style = getComputedStyle(document.documentElement);
+            
+            colors.primary = style.getPropertyValue('--primary-color').trim();
+            colors.secondary = style.getPropertyValue('--secondary-color').trim();
+            colors.accent = style.getPropertyValue('--accent-color').trim();
+            colors.background = style.getPropertyValue('--bg-color').trim();
+            
+            // Update existing nodes colors
+            if (nodes.length > 0) {
+                const colorOptions = [colors.primary, colors.secondary, colors.accent];
+                nodes.forEach(node => {
+                    node.color = colorOptions[Math.floor(Math.random() * colorOptions.length)];
+                });
+            }
+        }
+        
+        function resizeCanvas() {
+            if (canvas) {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+        }
+        
+        function initNodes() {
+            nodes = [];
+            const nodeCount = Math.min(Math.floor(window.innerWidth * window.innerHeight / 10000), 150);
+            const colorOptions = [colors.primary, colors.secondary, colors.accent];
+            
+            for (let i = 0; i < nodeCount; i++) {
+                nodes.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 3 + 1,
+                    speedX: (Math.random() - 0.5) * 1,
+                    speedY: (Math.random() - 0.5) * 1,
+                    color: colorOptions[Math.floor(Math.random() * colorOptions.length)]
+                });
+            }
+        }
+        
+        function animate() {
+            animationFrameId = requestAnimationFrame(animate);
+            
+            // Clear canvas
+            ctx.fillStyle = colors.background;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Update and draw nodes
+            updateNodes();
+            drawConnections();
+            drawNodes();
+        }
+        
+        function updateNodes() {
+            nodes.forEach(node => {
+                // Update position
+                node.x += node.speedX;
+                node.y += node.speedY;
+                
+                // Bounce off edges
+                if (node.x < 0 || node.x > canvas.width) {
+                    node.speedX *= -1;
+                }
+                if (node.y < 0 || node.y > canvas.height) {
+                    node.speedY *= -1;
+                }
+                
+                // Slightly randomize speed for more natural movement
+                node.speedX += (Math.random() - 0.5) * 0.01;
+                node.speedY += (Math.random() - 0.5) * 0.01;
+                
+                // Limit speed
+                const maxSpeed = 1.5;
+                const speed = Math.sqrt(node.speedX * node.speedX + node.speedY * node.speedY);
+                if (speed > maxSpeed) {
+                    node.speedX = (node.speedX / speed) * maxSpeed;
+                    node.speedY = (node.speedY / speed) * maxSpeed;
+                }
+            });
+        }
+        
+        function drawNodes() {
+            nodes.forEach(node => {
+                ctx.beginPath();
+                ctx.arc(node.x, node.y, node.size, 0, Math.PI * 2);
+                ctx.fillStyle = node.color;
+                ctx.fill();
+                
+                // Add glow effect
+                const glow = ctx.createRadialGradient(
+                    node.x, node.y, node.size,
+                    node.x, node.y, node.size * 3
+                );
+                glow.addColorStop(0, node.color);
+                glow.addColorStop(1, 'rgba(0,0,0,0)');
+                
+                ctx.beginPath();
+                ctx.arc(node.x, node.y, node.size * 3, 0, Math.PI * 2);
+                ctx.fillStyle = glow;
+                ctx.fill();
+            });
+        }
+        
+        function drawConnections() {
+            const maxDistance = 150;
+            
+            // Draw connections between nodes
+            for (let i = 0; i < nodes.length; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                    const dx = nodes[i].x - nodes[j].x;
+                    const dy = nodes[i].y - nodes[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < maxDistance) {
+                        ctx.beginPath();
+                        ctx.moveTo(nodes[i].x, nodes[i].y);
+                        ctx.lineTo(nodes[j].x, nodes[j].y);
+                        
+                        // Create gradient line for more visual appeal
+                        const gradient = ctx.createLinearGradient(
+                            nodes[i].x, nodes[i].y,
+                            nodes[j].x, nodes[j].y
+                        );
+                        gradient.addColorStop(0, nodes[i].color);
+                        gradient.addColorStop(1, nodes[j].color);
+                        
+                        ctx.strokeStyle = gradient;
+                        ctx.lineWidth = (1 - distance / maxDistance) * 1;
+                        ctx.globalAlpha = 1 - distance / maxDistance;
+                        ctx.stroke();
+                        ctx.globalAlpha = 1;
+                    }
+                }
+            }
+            
+            // Check for mouse/touch interaction
+            if (mouseNode.isActive) {
+                for (let i = 0; i < nodes.length; i++) {
+                    const dx = mouseNode.x - nodes[i].x;
+                    const dy = mouseNode.y - nodes[i].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < maxDistance * 1.5) {
+                        // Create attraction effect toward mouse
+                        const angle = Math.atan2(dy, dx);
+                        const force = 0.05;
+                        
+                        nodes[i].speedX += Math.cos(angle) * force;
+                        nodes[i].speedY += Math.sin(angle) * force;
+                        
+                        // Draw connection to mouse
+                        ctx.beginPath();
+                        ctx.moveTo(mouseNode.x, mouseNode.y);
+                        ctx.lineTo(nodes[i].x, nodes[i].y);
+                        ctx.strokeStyle = nodes[i].color;
+                        ctx.lineWidth = (1 - distance / (maxDistance * 1.5)) * 2;
+                        ctx.globalAlpha = 1 - distance / (maxDistance * 1.5);
+                        ctx.stroke();
+                        ctx.globalAlpha = 1;
+                    }
+                }
+            }
+        }
         
         // Create background particles
         document.addEventListener('DOMContentLoaded', function() {
