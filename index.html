@@ -19,6 +19,8 @@
             --shadow-color: rgba(0, 0, 0, 0.08);
             --shadow-hover: rgba(0, 0, 0, 0.12);
             --particle-color: rgba(0, 132, 255, 0.15);
+            --tooltip-bg: rgba(0, 0, 0, 0.8);
+            --tooltip-text: #ffffff;
         }
         
         [data-theme="dark"] {
@@ -33,6 +35,8 @@
             --shadow-color: rgba(0, 0, 0, 0.2);
             --shadow-hover: rgba(0, 0, 0, 0.3);
             --particle-color: rgba(255, 255, 255, 0.2);
+            --tooltip-bg: rgba(255, 255, 255, 0.9);
+            --tooltip-text: #121212;
         }
         
         * {
@@ -84,6 +88,17 @@
             }
             100% {
                 opacity: 0;
+            }
+        }
+        
+        @keyframes tooltipFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
         
@@ -317,6 +332,7 @@
             border: 1px solid rgba(0, 132, 255, 0.2);
             transition: all 0.3s ease;
             font-weight: 500;
+            position: relative;
         }
         
         .contact-info a:hover {
@@ -327,6 +343,84 @@
         
         .contact-info i {
             color: var(--primary-color);
+        }
+        
+        /* Email tooltip */
+        .email-container {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .email-tooltip {
+            visibility: hidden;
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 10px;
+            padding: 10px 15px;
+            background-color: var(--tooltip-bg);
+            color: var(--tooltip-text);
+            border-radius: 6px;
+            white-space: nowrap;
+            font-size: 14px;
+            opacity: 0;
+            z-index: 100;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            pointer-events: none;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+        
+        .email-tooltip::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: var(--tooltip-bg) transparent transparent transparent;
+        }
+        
+        .email-container:hover .email-tooltip {
+            visibility: visible;
+            opacity: 1;
+            animation: tooltipFadeIn 0.3s ease;
+            pointer-events: auto;
+        }
+        
+        .copy-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 3px 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+        
+        .copy-btn:hover {
+            background-color: var(--secondary-color);
+            transform: scale(1.05);
+        }
+        
+        .copied-feedback {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: var(--accent-color);
+            color: white;
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            font-weight: bold;
         }
         
         .navigation {
@@ -550,6 +644,16 @@
                 width: 80%;
                 text-align: center;
             }
+            
+            .email-tooltip {
+                left: 0;
+                transform: translateX(0);
+            }
+            
+            .email-tooltip::after {
+                left: 20px;
+                margin-left: 0;
+            }
         }
         
         /* Scroll bar styling */
@@ -596,10 +700,17 @@
                         Before joining ByteDance, I completed my master's degree at the Chinese Academy of Sciences in 2020, where I focused on Generative AI research. Prior to that, I earned my bachelor's degree from Northeastern University in 2017.
                     </p>
                     <div class="contact-info">
-                        <a href="mailto:zhudefa_ai@163.com">
-                            <i class="fas fa-envelope"></i>
-                            Email
-                        </a>
+                        <div class="email-container">
+                            <a href="mailto:zhudefa_ai@163.com">
+                                <i class="fas fa-envelope"></i>
+                                Email
+                                <span class="copied-feedback" id="copied-feedback">Copied!</span>
+                            </a>
+                            <div class="email-tooltip">
+                                <span id="email-text">zhudefa_ai@163.com</span>
+                                <button class="copy-btn" id="copy-email-btn">Copy</button>
+                            </div>
+                        </div>
                         <a href="https://scholar.google.com/citations?user=v4ySl6MAAAAJ&hl=zh-CN" target="_blank">
                             <i class="fas fa-graduation-cap"></i>
                             Google Scholar
@@ -703,6 +814,36 @@
                     themeIcon.classList.add('fa-moon');
                 }
             }
+            
+            // Email copy functionality
+            const copyBtn = document.getElementById('copy-email-btn');
+            const emailText = document.getElementById('email-text');
+            const copiedFeedback = document.getElementById('copied-feedback');
+            
+            copyBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Create a temporary input element
+                const tempInput = document.createElement('input');
+                tempInput.value = emailText.textContent;
+                document.body.appendChild(tempInput);
+                
+                // Select and copy the text
+                tempInput.select();
+                document.execCommand('copy');
+                
+                // Remove the temporary input
+                document.body.removeChild(tempInput);
+                
+                // Show feedback
+                copiedFeedback.style.opacity = '1';
+                
+                // Hide feedback after 2 seconds
+                setTimeout(function() {
+                    copiedFeedback.style.opacity = '0';
+                }, 2000);
+            });
         });
         
         // Create background particles
