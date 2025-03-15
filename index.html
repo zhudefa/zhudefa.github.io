@@ -133,6 +133,12 @@
             height: 100%;
             z-index: -2;
             pointer-events: none;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+        
+        #canvas-container.disabled {
+            opacity: 0;
         }
         
         canvas {
@@ -164,11 +170,18 @@
             padding: 0 20px;
         }
         
-        /* Theme toggle */
-        .theme-toggle {
+        /* Controls bar */
+        .controls-bar {
             position: fixed;
             top: 20px;
             right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+        
+        /* Theme toggle */
+        .theme-toggle, .animation-toggle {
             width: 45px;
             height: 45px;
             background-color: var(--card-bg);
@@ -177,20 +190,42 @@
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            z-index: 1000;
             box-shadow: 0 3px 10px var(--shadow-color);
             transition: all 0.3s ease;
         }
         
-        .theme-toggle:hover {
+        .theme-toggle:hover, .animation-toggle:hover {
             transform: translateY(-3px);
             box-shadow: 0 5px 15px var(--shadow-hover);
         }
         
-        .theme-toggle i {
+        .theme-toggle i, .animation-toggle i {
             font-size: 1.3rem;
             color: var(--primary-color);
             transition: all 0.3s ease;
+        }
+        
+        /* Controls tooltips */
+        .control-tooltip {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 8px;
+            padding: 5px 10px;
+            background-color: var(--tooltip-bg);
+            color: var(--tooltip-text);
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .theme-toggle:hover .control-tooltip,
+        .animation-toggle:hover .control-tooltip {
+            opacity: 1;
         }
         
         /* Particle animation background */
@@ -203,6 +238,12 @@
             z-index: -1;
             overflow: hidden;
             pointer-events: none;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+        
+        .particles.disabled {
+            opacity: 0;
         }
         
         .particle {
@@ -708,14 +749,24 @@
     </style>
 </head>
 <body>
+    <!-- Controls bar -->
+    <div class="controls-bar">
+        <!-- Animation toggle button -->
+        <div class="animation-toggle" id="animation-toggle">
+            <i class="fas fa-play"></i>
+            <span class="control-tooltip">Toggle Animation</span>
+        </div>
+        
+        <!-- Theme toggle button -->
+        <div class="theme-toggle" id="theme-toggle">
+            <i class="fas fa-moon"></i>
+            <span class="control-tooltip">Toggle Theme</span>
+        </div>
+    </div>
+    
     <!-- Canvas container for network animation -->
     <div id="canvas-container">
         <canvas id="nodes-canvas"></canvas>
-    </div>
-    
-    <!-- Theme toggle button -->
-    <div class="theme-toggle" id="theme-toggle">
-        <i class="fas fa-moon"></i>
     </div>
     
     <!-- Particles background -->
@@ -835,16 +886,17 @@
             accent: '',
             background: ''
         };
+        let animationEnabled = true;
         
         // Theme toggle functionality
         document.addEventListener('DOMContentLoaded', function() {
             const themeToggle = document.getElementById('theme-toggle');
+            const animationToggle = document.getElementById('animation-toggle');
             const htmlElement = document.documentElement;
             const themeIcon = themeToggle.querySelector('i');
-            
-            // Setup canvas
-            canvas = document.getElementById('nodes-canvas');
-            ctx = canvas.getContext('2d');
+            const animationIcon = animationToggle.querySelector('i');
+            const canvasContainer = document.getElementById('canvas-container');
+            const particlesContainer = document.getElementById('particles');
             
             // Check for saved theme preference
             const savedTheme = localStorage.getItem('theme');
@@ -853,38 +905,117 @@
                 updateThemeIcon(savedTheme);
             }
             
-            // Initialize the network animation
-            updateColors();
-            resizeCanvas();
-            initNodes();
-            animate();
+            // Check for saved animation preference
+            const savedAnimation = localStorage.getItem('animation');
+            if (savedAnimation === 'disabled') {
+                animationEnabled = false;
+                toggleAnimation(false);
+                updateAnimationIcon(false);
+            }
+            
+            // Setup canvas
+            canvas = document.getElementById('nodes-canvas');
+            ctx = canvas.getContext('2d');
+            
+            // Initialize the network animation if enabled
+            if (animationEnabled) {
+                updateColors();
+                resizeCanvas();
+                initNodes();
+                animate();
+            }
+            
+            // Toggle animation on click
+            animationToggle.addEventListener('click', function() {
+                animationEnabled = !animationEnabled;
+                toggleAnimation(animationEnabled);
+                updateAnimationIcon(animationEnabled);
+                localStorage.setItem('animation', animationEnabled ? 'enabled' : 'disabled');
+                
+                if (animationEnabled) {
+                    // Restart animations
+                    updateColors();
+                    resizeCanvas();
+                    initNodes();
+                    animate();
+                    regenerateParticles();
+                    
+                    // Re-enable cursor particles
+                    document.addEventListener('mousemove', handleMouseMove);
+                    document.addEventListener('touchmove', handleTouchMove);
+                } else {
+                    // Stop animations
+                    if (animationFrameId) {
+                        cancelAnimationFrame(animationFrameId);
+                    }
+                    
+                    // Remove cursor particle event listeners
+                    document.removeEventListener('mousemove', handleMouseMove);
+                    document.removeEventListener('touchmove', handleTouchMove);
+                }
+            });
+            
+            function toggleAnimation(enabled) {
+                if (enabled) {
+                    canvasContainer.classList.remove('disabled');
+                    particlesContainer.classList.remove('disabled');
+                } else {
+                    canvasContainer.classList.add('disabled');
+                    particlesContainer.classList.add('disabled');
+                }
+            }
+            
+            function updateAnimationIcon(enabled) {
+                if (enabled) {
+                    animationIcon.classList.remove('fa-play');
+                    animationIcon.classList.add('fa-pause');
+                    animationToggle.querySelector('.control-tooltip').textContent = 'Disable Animation';
+                } else {
+                    animationIcon.classList.remove('fa-pause');
+                    animationIcon.classList.add('fa-play');
+                    animationToggle.querySelector('.control-tooltip').textContent = 'Enable Animation';
+                }
+            }
             
             // Handle mouse/touch interaction for network animation
-            canvas.addEventListener('mousemove', function(e) {
+            function handleMouseMove(e) {
                 mouseNode.x = e.clientX;
                 mouseNode.y = e.clientY;
                 mouseNode.isActive = true;
-            });
+                
+                if (animationEnabled) {
+                    createCursorParticle(e.clientX, e.clientY);
+                }
+            }
             
+            function handleTouchMove(e) {
+                e.preventDefault();
+                if (e.touches && e.touches[0]) {
+                    mouseNode.x = e.touches[0].clientX;
+                    mouseNode.y = e.touches[0].clientY;
+                    mouseNode.isActive = true;
+                    
+                    if (animationEnabled) {
+                        createCursorParticle(e.touches[0].clientX, e.touches[0].clientY);
+                    }
+                }
+            }
+            
+            canvas.addEventListener('mousemove', handleMouseMove);
             canvas.addEventListener('mouseleave', function() {
                 mouseNode.isActive = false;
             });
-            
-            canvas.addEventListener('touchmove', function(e) {
-                e.preventDefault();
-                mouseNode.x = e.touches[0].clientX;
-                mouseNode.y = e.touches[0].clientY;
-                mouseNode.isActive = true;
-            });
-            
+            canvas.addEventListener('touchmove', handleTouchMove);
             canvas.addEventListener('touchend', function() {
                 mouseNode.isActive = false;
             });
             
             // Handle window resize for canvas
             window.addEventListener('resize', function() {
-                resizeCanvas();
-                initNodes();
+                if (animationEnabled) {
+                    resizeCanvas();
+                    initNodes();
+                }
             });
             
             // Toggle theme on click
@@ -896,11 +1027,13 @@
                 localStorage.setItem('theme', newTheme);
                 updateThemeIcon(newTheme);
                 
-                // Update colors for network animation
-                updateColors();
-                
-                // Regenerate particles for the new theme
-                regenerateParticles();
+                if (animationEnabled) {
+                    // Update colors for network animation
+                    updateColors();
+                    
+                    // Regenerate particles for the new theme
+                    regenerateParticles();
+                }
             });
             
             function updateThemeIcon(theme) {
@@ -942,6 +1075,14 @@
                     copiedFeedback.style.opacity = '0';
                 }, 2000);
             });
+            
+            // Initialize particles if animation is enabled
+            if (animationEnabled) {
+                regenerateParticles();
+                // Initialize cursor follower particles
+                document.addEventListener('mousemove', handleMouseMove);
+                document.addEventListener('touchmove', handleTouchMove);
+            }
         });
         
         // Network animation functions
@@ -1111,16 +1252,12 @@
         }
         
         // Create background particles
-        document.addEventListener('DOMContentLoaded', function() {
-            regenerateParticles();
-            // Initialize cursor follower particles
-            initCursorParticles();
-        });
-        
         function regenerateParticles() {
             const particlesContainer = document.getElementById('particles');
             // Clear existing particles
             particlesContainer.innerHTML = '';
+            
+            if (!animationEnabled) return;
             
             const particleCount = 50;
             
@@ -1153,21 +1290,9 @@
             }
         }
         
-        // Cursor follower particles
-        function initCursorParticles() {
-            document.addEventListener('mousemove', function(e) {
-                createCursorParticle(e.clientX, e.clientY);
-            });
-            
-            // For touch devices
-            document.addEventListener('touchmove', function(e) {
-                if (e.touches && e.touches[0]) {
-                    createCursorParticle(e.touches[0].clientX, e.touches[0].clientY);
-                }
-            });
-        }
-        
         function createCursorParticle(x, y) {
+            if (!animationEnabled) return;
+            
             // Get current theme colors
             const isDarkTheme = document.documentElement.getAttribute('data-theme') === 'dark';
             
