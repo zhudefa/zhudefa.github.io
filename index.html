@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Defa Zhu | 朱德发 - Personal Website</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #00c3ff;
+            --secondary-color: #7000ff;
+            --text-color: #e0e0e0;
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --accent-color: #00ffd0;
+            --gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        @keyframes gradient-animation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(0, 195, 255, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(0, 195, 255, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(0, 195, 255, 0);
+            }
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(0, 195, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(112, 0, 255, 0.1) 0%, transparent 50%);
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Particle animation background */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+        }
+        
+        header {
+            padding: 60px 0 40px;
+            position: relative;
+        }
+        
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            position: relative;
+            z-index: 1;
+        }
+        
+        @media (min-width: 768px) {
+            .header-content {
+                flex-direction: row;
+                align-items: flex-start;
+                gap: 60px;
+            }
+        }
+        
+        .profile-image-container {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            margin-bottom: 30px;
+        }
+        
+        @media (min-width: 768px) {
+            .profile-image-container {
+                margin-bottom: 0;
+            }
+        }
+        
+        .profile-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            position: relative;
+            z-index: 1;
+            border: 3px solid transparent;
+            background: var(--gradient);
+            background-clip: padding-box;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .profile-image::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            background: var(--gradient);
+            border-radius: 50%;
+            z-index: -1;
+            animation: pulse 2s infinite;
+        }
+        
+        .profile-glow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: var(--gradient);
+            filter: blur(20px);
+            opacity: 0.5;
+            z-index: 0;
+            top: 0;
+            left: 0;
+        }
+        
+        .profile-info {
+            flex: 1;
+            max-width: 600px;
+            text-align: left;
+        }
+        
+        .name-bilingual {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+        
+        .name-english {
+            font-size: 3rem;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+            position: relative;
+        }
+        
+        .name-chinese {
+            font-size: 2rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 15px;
+        }
+        
+        .position {
+            display: inline-block;
+            color: var(--accent-color);
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            padding: 5px 15px;
+            border-radius: 20px;
+            background: rgba(0, 255, 208, 0.1);
+            border: 1px solid rgba(0, 255, 208, 0.3);
+        }
+        
+        .bio {
+            margin-bottom: 25px;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.8);
+            text-align: left;
+        }
+        
+        .contact-info {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .contact-info a {
+            color: var(--text-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .contact-info a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .contact-info i {
+            color: var(--primary-color);
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: center;
+            margin: 40px 0 20px;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .navigation a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .navigation a:hover {
+            background: var(--gradient);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        section {
+            margin-bottom: 80px;
+            padding: 20px;
+            border-radius: 20px;
+            background: var(--card-bg);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient);
+            background-size: 200% 200%;
+            animation: gradient-animation 3s ease infinite;
+        }
+        
+        h2 {
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2rem;
+            padding-bottom: 10px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--gradient);
+        }
+        
+        .publications-list {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            margin-top: 20px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .publication-card {
+            border-radius: 15px;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .publication-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .publication-title {
+            font-weight: bold;
+            color: white;
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+        }
+        
+        .publication-authors {
+            font-style: italic;
+            margin-bottom: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .publication-venue {
+            margin-bottom: 12px;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+        
+        .publication-description {
+            margin-bottom: 15px;
+            color: rgba(255, 255, 255, 0.6);
+            flex-grow: 1;
+        }
+        
+        .publication-links {
+            display: flex;
+            gap: 10px;
+            margin-top: auto;
+        }
+        
+        .publication-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 5px 12px;
+            border-radius: 15px;
+            background: rgba(0, 195, 255, 0.1);
+            border: 1px solid rgba(0, 195, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .publication-links a:hover {
+            background: rgba(0, 195, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 50px 0;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+            position: relative;
+        }
+        
+        .footer-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .footer-glow {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 150px;
+            background: var(--gradient);
+            filter: blur(100px);
+            opacity: 0.15;
+            z-index: 0;
+        }
+        
+        /* Media Queries */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            
+            .profile-info, .bio {
+                text-align: center;
+            }
+            
+            .name-english {
+                font-size: 2.5rem;
+            }
+            
+            .name-chinese {
+                font-size: 1.7rem;
+            }
+            
+            .navigation {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .navigation a {
+                width: 80%;
+                text-align: center;
+            }
+        }
+        
+        /* Scroll bar styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+            background: var(--bg-color);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--gradient);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Particles background -->
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="profile-image-container">
+                    <div class="profile-glow"></div>
+                    <img src="profile.jpeg" alt="Defa Zhu" class="profile-image">
+                </div>
+                
+                <div class="profile-info">
+                    <div class="name-bilingual">
+                        <span class="name-english">Defa Zhu</span>
+                        <span class="name-chinese">朱德发</span>
+                    </div>
+                    <span class="position">AI Researcher @ ByteDance</span>
+                    <p class="bio">
+                        I graduated with a bachelor's degree from Northeastern University in 2017 and completed my master's degree at the Chinese Academy of Sciences in 2020. During my graduate studies, I focused on Generative AI research. Currently, I work at ByteDance where my research is centered on Large Language Models (LLMs), including neural network architecture design, pretraining, and post-training optimization techniques.
+                    </p>
+                    <div class="contact-info">
+                        <a href="mailto:zhudefa_ai@163.com">
+                            <i class="fas fa-envelope"></i>
+                            Email
+                        </a>
+                        <a href="https://scholar.google.com/citations?user=v4ySl6MAAAAJ&hl=zh-CN" target="_blank">
+                            <i class="fas fa-graduation-cap"></i>
+                            Google Scholar
+                        </a>
+                        <a href="https://www.zhihu.com/people/mathfinder" target="_blank">
+                            <i class="fab fa-zhihu"></i>
+                            Zhihu
+                        </a>
+                        <a href="https://x.com/zhudefa" target="_blank">
+                            <i class="fab fa-twitter"></i>
+                            x.com
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="navigation">
+                <a href="#about">About</a>
+                <a href="#publications">Publications</a>
+            </nav>
+        </header>
+        
+        <main>
+            <section id="selected publications">
+                <h2>Publications</h2>
+                <div class="publications-list">
+                    <div class="publication-card">
+                        <div class="publication-title">Over-tokenized transformer: Vocabulary is generally worth scaling</div>
+                        <div class="publication-authors">H Huang, D Zhu, B Wu, Y Zeng, Y Wang, Q Min, X Zhou</div>
+                        <div class="publication-venue">Preprint</div>
+                        <p class="publication-description">Tokenization is a fundamental component of large language models (LLMs), yet its influence on model scaling and performance is not fully explored. In this paper, we introduce Over-Tokenized Transformers, a novel framework that decouples input and output vocabularies to improve language modeling performance. Specifically, our approach scales up input vocabularies to leverage multi-gram tokens. Through extensive experiments, we uncover a log-linear relationship between input vocabulary size and training loss, demonstrating that larger input vocabularies consistently enhance model performance, regardless of model size. Using a large input vocabulary, we achieve performance comparable to double-sized baselines with no additional cost. Our findings highlight the importance of tokenization in scaling laws and provide practical insight for tokenizer design, paving the way for more efficient and powerful LLMs.</p>
+                        <div class="publication-links">
+                            <a href="https://arxiv.org/pdf/2501.16975" target="_blank">PDF</a>
+                        </div>
+                    </div>
+                    
+                    <div class="publication-card">
+                        <div class="publication-title">Ultra-Sparse Memory Network</div>
+                        <div class="publication-authors">Z Huang, Q Min, H Huang, D Zhu, Y Zeng, R Guo, X Zhou</div>
+                        <div class="publication-venue">ICLR, 2025</div>
+                        <p class="publication-description">It is widely acknowledged that the performance of Transformer models is exponentially related to their number of parameters and computational complexity. While approaches like Mixture of Experts (MoE) decouple parameter count from computational complexity, they still face challenges in inference due to high memory access costs. This work introduces UltraMem, incorporating large-scale, ultra-sparse memory layer to address these limitations. Our approach significantly reduces inference latency while maintaining model performance. We also investigate the scaling laws of this new architecture, demonstrating that it not only exhibits favorable scaling properties but outperforms traditional models. In our experiments, we train networks with up to 20 million memory slots. The results show that our method achieves state-of-the-art inference speed and model performance within a given computational budget.</p>
+                        <div class="publication-links">
+                            <a href="https://arxiv.org/pdf/2411.12364" target="_blank">PDF</a>
+                        </div>
+                    </div>
+
+                    <div class="publication-card">
+                        <div class="publication-title">Hyper-Connections</div>
+                        <div class="publication-authors">Defa Zhu, Hongzhi Huang, Zihao Huang, Yutao Zeng, Yunyao Mao, Banggu Wu, Qiyang Min, Xun Zhou</div>
+                        <div class="publication-venue">ICLR, 2025</div>
+                        <p class="publication-description">We present hyper-connections, a simple yet effective method that can serve as an alternative to residual connections. This approach specifically addresses common drawbacks observed in residual connection variants, such as the seesaw effect between gradient vanishing and representation collapse. Theoretically, hyper-connections allow the network to adjust the strength of connections between features at different depths and dynamically rearrange layers. We conduct experiments focusing on the pre-training of large language models, including dense and sparse models, where hyper-connections show significant performance improvements over residual connections. Additional experiments conducted on vision tasks also demonstrate similar improvements. We anticipate that this method will be broadly applicable and beneficial across a wide range of AI problems.</p>
+                        <div class="publication-links">
+                            <a href="https://arxiv.org/pdf/2409.19606" target="_blank">PDF</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <div class="footer-glow"></div>
+            <div class="footer-content">
+                <p>&copy; 2025 Defa Zhu | 朱德发. All Rights Reserved.</p>
+                <p style="margin-top: 10px;">Last Updated: March 2025</p>
+            </div>
+        </footer>
+    </div>
+    
+    <script>
+        // Create particles
+        document.addEventListener('DOMContentLoaded', function() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Random position
+                const left = Math.random() * 100;
+                const top = Math.random() * 100;
+                
+                // Random size
+                const size = Math.random() * 3 + 1;
+                
+                // Random opacity
+                const opacity = Math.random() * 0.5 + 0.1;
+                
+                // Apply styles
+                particle.style.left = `${left}%`;
+                particle.style.top = `${top}%`;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.opacity = opacity;
+                
+                // Random animation
+                const duration = Math.random() * 50 + 30;
+                particle.style.animation = `float ${duration}s infinite ease-in-out`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        });
+        
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
