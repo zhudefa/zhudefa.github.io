@@ -1022,14 +1022,22 @@
                 updateAnimationIcon(false);
             }
             
-            // Check for saved animation type preference
-            const savedAnimationType = localStorage.getItem('animationType');
-            if (savedAnimationType && Object.values(ANIMATIONS).includes(savedAnimationType)) {
-                currentAnimation = savedAnimationType;
-            } else {
-                // Randomly select an animation if none is saved
-                currentAnimation = Math.random() < 0.5 ? ANIMATIONS.NETWORK : ANIMATIONS.SNAKE;
-            }
+            // Use timestamp as part of random seed
+            const timestamp = new Date().getTime();
+            // Generate a pseudo-random number based on timestamp
+            const randomValue = Math.sin(timestamp) * 10000;
+            // Get a random value between 0 and 1
+            const randomSelector = Math.abs(randomValue - Math.floor(randomValue));
+
+            // Select animation randomly on each refresh
+            const animationTypes = Object.values(ANIMATIONS);
+            const randomIndex = Math.floor(randomSelector * animationTypes.length);
+            currentAnimation = animationTypes[randomIndex];
+
+            // Save selection for controls to work correctly
+            localStorage.setItem('animationType', currentAnimation);
+
+            console.log("Selected animation using timestamp:", currentAnimation);
             
             // Initialize animations
             initAnimations();
