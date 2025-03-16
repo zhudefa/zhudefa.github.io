@@ -22,6 +22,10 @@
             --tooltip-bg: rgba(0, 0, 0, 0.8);
             --tooltip-text: #ffffff;
             
+            /* Flow animation colors */
+            --flow-particle-colors: #4285f4, #34a853, #fbbc05, #ea4335;
+            --flow-bg: rgba(255, 255, 255, 0.97);
+            
             /* Snake colors */
             --snake-bg: rgba(248, 249, 250, 0.97);
             --snake-head: rgba(0, 132, 255, 0.9);
@@ -47,6 +51,10 @@
             --particle-color: rgba(255, 255, 255, 0.2);
             --tooltip-bg: rgba(255, 255, 255, 0.9);
             --tooltip-text: #121212;
+            
+            /* Flow animation colors for dark theme */
+            --flow-particle-colors: #00c3ff, #9b59ff, #00ffd0, #c061cb;
+            --flow-bg: rgba(18, 18, 18, 0.97);
             
             /* Snake colors for dark theme */
             --snake-bg: rgba(18, 18, 18, 0.97);
@@ -183,8 +191,8 @@
             opacity: 0;
         }
         
-        /* Canvas for network animation */
-        #network-container canvas {
+        /* Canvas for animations */
+        .animation-container canvas {
             display: block;
         }
         
@@ -220,6 +228,12 @@
             box-shadow: 0 0 10px var(--snake-food);
             animation: foodPulse 2s infinite ease-in-out;
             z-index: 1;
+        }
+
+        /* Flow animation styles */
+        #flow-container {
+            background-color: var(--flow-bg);
+            overflow: hidden;
         }
         
         /* Particles background */
@@ -853,6 +867,10 @@
         <canvas id="nodes-canvas"></canvas>
     </div>
     
+    <div id="flow-container" class="animation-container">
+        <canvas id="flow-canvas"></canvas>
+    </div>
+    
     <div id="snake-container" class="animation-container">
         <!-- No grid, just the container for snake elements -->
     </div>
@@ -961,6 +979,7 @@
         // Animation types
         const ANIMATIONS = {
             NETWORK: 'network',
+            FLOW: 'flow',
             SNAKE: 'snake'
         };
         
@@ -969,7 +988,7 @@
         let currentAnimation = null;
         
         // Network animation variables
-        let canvas, ctx;
+        let networkCanvas, networkCtx;
         let nodes = [];
         let networkAnimationId;
         let mouseNode = {
@@ -978,11 +997,39 @@
             size: 0,
             isActive: false
         };
+        
+        // Flow animation variables
+        let flowCanvas, flowCtx;
+        let flowAnimationId;
+        let particles = [];
+        let mouse = {
+            x: undefined,
+            y: undefined,
+            lastX: undefined,
+            lastY: undefined,
+            isActive: false,
+            velocity: { x: 0, y: 0 }
+        };
+        
+        // Flow animation config
+        const flowConfig = {
+            particleCount: 1000,
+            particleSize: { min: 1, max: 3 },
+            speed: { min: 0.5, max: 2 },
+            connectionDistance: 100,
+            mouseInfluenceDistance: 150,
+            mouseForce: 0.1,
+            mode: 'flow', // flow, orbit, wave
+            frameRate: 60
+        };
+        
+        // Colors for animations
         let colors = {
             primary: '',
             secondary: '',
             accent: '',
-            background: ''
+            background: '',
+            flowParticles: []
         };
         
         // Snake animation variables
@@ -1029,15 +1076,18 @@
             // Get a random value between 0 and 1
             const randomSelector = Math.abs(randomValue - Math.floor(randomValue));
 
-            // Select animation randomly on each refresh
-            const animationTypes = Object.values(ANIMATIONS);
-            const randomIndex = Math.floor(randomSelector * animationTypes.length);
-            currentAnimation = animationTypes[randomIndex];
-
+            // Set flow animation as default, or use saved preference
+            const savedAnimationType = localStorage.getItem('animationType');
+            if (savedAnimationType && Object.values(ANIMATIONS).includes(savedAnimationType)) {
+                currentAnimation = savedAnimationType;
+            } else {
+                currentAnimation = ANIMATIONS.FLOW; // Default to flow animation
+            }
+            
             // Save selection for controls to work correctly
             localStorage.setItem('animationType', currentAnimation);
 
-            console.log("Selected animation using timestamp:", currentAnimation);
+            console.log("Current animation:", currentAnimation);
             
             // Initialize animations
             initAnimations();
@@ -1063,11 +1113,13 @@
             
             // Switch animation on click
             animationSwitch.addEventListener('click', function() {
-                if (currentAnimation === ANIMATIONS.NETWORK) {
-                    switchAnimation(ANIMATIONS.SNAKE);
-                } else {
-                    switchAnimation(ANIMATIONS.NETWORK);
-                }
+                // Get next animation type
+                const animationTypes = Object.values(ANIMATIONS);
+                const currentIndex = animationTypes.indexOf(currentAnimation);
+                const nextIndex = (currentIndex + 1) % animationTypes.length;
+                const nextAnimation = animationTypes[nextIndex];
+                
+                switchAnimation(nextAnimation);
             });
             
             // Toggle theme on click
@@ -1153,8 +1205,11 @@
             window.addEventListener('resize', function() {
                 if (animationEnabled) {
                     if (currentAnimation === ANIMATIONS.NETWORK) {
-                        resizeCanvas();
+                        resizeNetworkCanvas();
                         initNodes();
+                    } else if (currentAnimation === ANIMATIONS.FLOW) {
+                        resizeFlowCanvas();
+                        initParticles();
                     } else if (currentAnimation === ANIMATIONS.SNAKE) {
                         updateGridSize();
                         resetSnakeGame();
@@ -1170,6 +1225,12 @@
                 mouseNode.x = e.clientX;
                 mouseNode.y = e.clientY;
                 mouseNode.isActive = true;
+            } else if (currentAnimation === ANIMATIONS.FLOW) {
+                mouse.lastX = mouse.x;
+                mouse.lastY = mouse.y;
+                mouse.x = e.clientX;
+                mouse.y = e.clientY;
+                mouse.isActive = true;
             }
             
             if (animationEnabled) {
@@ -1184,6 +1245,12 @@
                     mouseNode.x = e.touches[0].clientX;
                     mouseNode.y = e.touches[0].clientY;
                     mouseNode.isActive = true;
+                } else if (currentAnimation === ANIMATIONS.FLOW) {
+                    mouse.lastX = mouse.x;
+                    mouse.lastY = mouse.y;
+                    mouse.x = e.touches[0].clientX;
+                    mouse.y = e.touches[0].clientY;
+                    mouse.isActive = true;
                 }
                 
                 if (animationEnabled) {
@@ -1195,17 +1262,30 @@
         // Initialize all animations
         function initAnimations() {
             // Initialize network animation
-            canvas = document.getElementById('nodes-canvas');
-            ctx = canvas.getContext('2d');
+            networkCanvas = document.getElementById('nodes-canvas');
+            networkCtx = networkCanvas.getContext('2d');
             
-            // Setup event listeners for network animation
-            canvas.addEventListener('mousemove', handleMouseMove);
-            canvas.addEventListener('mouseleave', function() {
+            // Initialize flow animation
+            flowCanvas = document.getElementById('flow-canvas');
+            flowCtx = flowCanvas.getContext('2d');
+            
+            // Setup event listeners for animations
+            networkCanvas.addEventListener('mousemove', handleMouseMove);
+            networkCanvas.addEventListener('mouseleave', function() {
                 mouseNode.isActive = false;
             });
-            canvas.addEventListener('touchmove', handleTouchMove);
-            canvas.addEventListener('touchend', function() {
+            networkCanvas.addEventListener('touchmove', handleTouchMove);
+            networkCanvas.addEventListener('touchend', function() {
                 mouseNode.isActive = false;
+            });
+            
+            flowCanvas.addEventListener('mousemove', handleMouseMove);
+            flowCanvas.addEventListener('mouseleave', function() {
+                mouse.isActive = false;
+            });
+            flowCanvas.addEventListener('touchmove', handleTouchMove);
+            flowCanvas.addEventListener('touchend', function() {
+                mouse.isActive = false;
             });
             
             // Initialize colors
@@ -1215,15 +1295,18 @@
         // Toggle all animations
         function toggleAnimation(enabled) {
             const networkContainer = document.getElementById('network-container');
+            const flowContainer = document.getElementById('flow-container');
             const snakeContainer = document.getElementById('snake-container');
             const particlesContainer = document.getElementById('particles');
             
             if (enabled) {
                 networkContainer.classList.remove('disabled');
+                flowContainer.classList.remove('disabled');
                 snakeContainer.classList.remove('disabled');
                 particlesContainer.classList.remove('disabled');
             } else {
                 networkContainer.classList.add('disabled');
+                flowContainer.classList.add('disabled');
                 snakeContainer.classList.add('disabled');
                 particlesContainer.classList.add('disabled');
             }
@@ -1245,19 +1328,32 @@
         // Activate specific animation
         function activateAnimation(animation) {
             const networkContainer = document.getElementById('network-container');
+            const flowContainer = document.getElementById('flow-container');
             const snakeContainer = document.getElementById('snake-container');
             
+            // Hide all containers first
+            networkContainer.classList.remove('active');
+            flowContainer.classList.remove('active');
+            snakeContainer.classList.remove('active');
+            
+            // Activate the selected animation
             if (animation === ANIMATIONS.NETWORK) {
                 networkContainer.classList.add('active');
-                snakeContainer.classList.remove('active');
                 
                 if (animationEnabled) {
-                    resizeCanvas();
+                    resizeNetworkCanvas();
                     initNodes();
-                    animate();
+                    animateNetwork();
+                }
+            } else if (animation === ANIMATIONS.FLOW) {
+                flowContainer.classList.add('active');
+                
+                if (animationEnabled) {
+                    resizeFlowCanvas();
+                    initParticles();
+                    animateFlow();
                 }
             } else if (animation === ANIMATIONS.SNAKE) {
-                networkContainer.classList.remove('active');
                 snakeContainer.classList.add('active');
                 
                 if (animationEnabled) {
@@ -1274,6 +1370,11 @@
                     cancelAnimationFrame(networkAnimationId);
                     networkAnimationId = null;
                 }
+            } else if (animation === ANIMATIONS.FLOW) {
+                if (flowAnimationId) {
+                    cancelAnimationFrame(flowAnimationId);
+                    flowAnimationId = null;
+                }
             } else if (animation === ANIMATIONS.SNAKE) {
                 clearSnakeIntervals();
                 resetSnakeGame();
@@ -1288,6 +1389,12 @@
                 networkAnimationId = null;
             }
             
+            // Stop flow animation
+            if (flowAnimationId) {
+                cancelAnimationFrame(flowAnimationId);
+                flowAnimationId = null;
+            }
+            
             // Stop snake animation
             clearSnakeIntervals();
             resetSnakeGame();
@@ -1300,9 +1407,13 @@
         // Restart current animation
         function restartCurrentAnimation() {
             if (currentAnimation === ANIMATIONS.NETWORK) {
-                resizeCanvas();
+                resizeNetworkCanvas();
                 initNodes();
-                animate();
+                animateNetwork();
+            } else if (currentAnimation === ANIMATIONS.FLOW) {
+                resizeFlowCanvas();
+                initParticles();
+                animateFlow();
             } else if (currentAnimation === ANIMATIONS.SNAKE) {
                 updateGridSize();
                 spawnSnakes();
@@ -1325,6 +1436,10 @@
             colors.accent = style.getPropertyValue('--accent-color').trim();
             colors.background = style.getPropertyValue('--bg-color').trim();
             
+            // Get flow particle colors
+            const flowColorsStr = style.getPropertyValue('--flow-particle-colors').trim();
+            colors.flowParticles = flowColorsStr.split(',').map(color => color.trim());
+            
             // Update existing nodes colors
             if (nodes.length > 0) {
                 const colorOptions = [colors.primary, colors.secondary, colors.accent];
@@ -1332,13 +1447,22 @@
                     node.color = colorOptions[Math.floor(Math.random() * colorOptions.length)];
                 });
             }
+            
+            // Update flow particles colors
+            if (particles.length > 0) {
+                particles.forEach(particle => {
+                    const colorIndex = Math.floor(Math.random() * colors.flowParticles.length);
+                    particle.color = colors.flowParticles[colorIndex];
+                    particle.originalColor = colors.flowParticles[colorIndex];
+                });
+            }
         }
         
         // Network animation functions
-        function resizeCanvas() {
-            if (canvas) {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
+        function resizeNetworkCanvas() {
+            if (networkCanvas) {
+                networkCanvas.width = window.innerWidth;
+                networkCanvas.height = window.innerHeight;
             }
         }
         
@@ -1349,8 +1473,8 @@
             
             for (let i = 0; i < nodeCount; i++) {
                 nodes.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
+                    x: Math.random() * networkCanvas.width,
+                    y: Math.random() * networkCanvas.height,
                     size: Math.random() * 3 + 1,
                     speedX: (Math.random() - 0.5) * 1,
                     speedY: (Math.random() - 0.5) * 1,
@@ -1359,12 +1483,12 @@
             }
         }
         
-        function animate() {
-            networkAnimationId = requestAnimationFrame(animate);
+        function animateNetwork() {
+            networkAnimationId = requestAnimationFrame(animateNetwork);
             
             // Clear canvas
-            ctx.fillStyle = colors.background;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            networkCtx.fillStyle = colors.background;
+            networkCtx.fillRect(0, 0, networkCanvas.width, networkCanvas.height);
             
             // Update and draw nodes
             updateNodes();
@@ -1379,10 +1503,10 @@
                 node.y += node.speedY;
                 
                 // Bounce off edges
-                if (node.x < 0 || node.x > canvas.width) {
+                if (node.x < 0 || node.x > networkCanvas.width) {
                     node.speedX *= -1;
                 }
-                if (node.y < 0 || node.y > canvas.height) {
+                if (node.y < 0 || node.y > networkCanvas.height) {
                     node.speedY *= -1;
                 }
                 
@@ -1402,23 +1526,23 @@
         
         function drawNodes() {
             nodes.forEach(node => {
-                ctx.beginPath();
-                ctx.arc(node.x, node.y, node.size, 0, Math.PI * 2);
-                ctx.fillStyle = node.color;
-                ctx.fill();
+                networkCtx.beginPath();
+                networkCtx.arc(node.x, node.y, node.size, 0, Math.PI * 2);
+                networkCtx.fillStyle = node.color;
+                networkCtx.fill();
                 
                 // Add glow effect
-                const glow = ctx.createRadialGradient(
+                const glow = networkCtx.createRadialGradient(
                     node.x, node.y, node.size,
                     node.x, node.y, node.size * 3
                 );
                 glow.addColorStop(0, node.color);
                 glow.addColorStop(1, 'rgba(0,0,0,0)');
                 
-                ctx.beginPath();
-                ctx.arc(node.x, node.y, node.size * 3, 0, Math.PI * 2);
-                ctx.fillStyle = glow;
-                ctx.fill();
+                networkCtx.beginPath();
+                networkCtx.arc(node.x, node.y, node.size * 3, 0, Math.PI * 2);
+                networkCtx.fillStyle = glow;
+                networkCtx.fill();
             });
         }
         
@@ -1433,23 +1557,23 @@
                     const distance = Math.sqrt(dx * dx + dy * dy);
                     
                     if (distance < maxDistance) {
-                        ctx.beginPath();
-                        ctx.moveTo(nodes[i].x, nodes[i].y);
-                        ctx.lineTo(nodes[j].x, nodes[j].y);
+                        networkCtx.beginPath();
+                        networkCtx.moveTo(nodes[i].x, nodes[i].y);
+                        networkCtx.lineTo(nodes[j].x, nodes[j].y);
                         
                         // Create gradient line for more visual appeal
-                        const gradient = ctx.createLinearGradient(
+                        const gradient = networkCtx.createLinearGradient(
                             nodes[i].x, nodes[i].y,
                             nodes[j].x, nodes[j].y
                         );
                         gradient.addColorStop(0, nodes[i].color);
                         gradient.addColorStop(1, nodes[j].color);
                         
-                        ctx.strokeStyle = gradient;
-                        ctx.lineWidth = (1 - distance / maxDistance) * 1;
-                        ctx.globalAlpha = 1 - distance / maxDistance;
-                        ctx.stroke();
-                        ctx.globalAlpha = 1;
+                        networkCtx.strokeStyle = gradient;
+                        networkCtx.lineWidth = (1 - distance / maxDistance) * 1;
+                        networkCtx.globalAlpha = 1 - distance / maxDistance;
+                        networkCtx.stroke();
+                        networkCtx.globalAlpha = 1;
                     }
                 }
             }
@@ -1470,18 +1594,264 @@
                         nodes[i].speedY += Math.sin(angle) * force;
                         
                         // Draw connection to mouse
-                        ctx.beginPath();
-                        ctx.moveTo(mouseNode.x, mouseNode.y);
-                        ctx.lineTo(nodes[i].x, nodes[i].y);
-                        ctx.strokeStyle = nodes[i].color;
-                        ctx.lineWidth = (1 - distance / (maxDistance * 1.5)) * 2;
-                        ctx.globalAlpha = 1 - distance / (maxDistance * 1.5);
-                        ctx.stroke();
-                        ctx.globalAlpha = 1;
+                        networkCtx.beginPath();
+                        networkCtx.moveTo(mouseNode.x, mouseNode.y);
+                        networkCtx.lineTo(nodes[i].x, nodes[i].y);
+                        networkCtx.strokeStyle = nodes[i].color;
+                        networkCtx.lineWidth = (1 - distance / (maxDistance * 1.5)) * 2;
+                        networkCtx.globalAlpha = 1 - distance / (maxDistance * 1.5);
+                        networkCtx.stroke();
+                        networkCtx.globalAlpha = 1;
                     }
                 }
             }
         }
+        
+        // Flow animation functions
+        function resizeFlowCanvas() {
+            if (flowCanvas) {
+                flowCanvas.width = window.innerWidth;
+                flowCanvas.height = window.innerHeight;
+            }
+        }
+        
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < flowConfig.particleCount; i++) {
+                createParticle();
+            }
+        }
+        
+        function createParticle(x, y) {
+            const colorIndex = Math.floor(Math.random() * colors.flowParticles.length);
+            const particle = {
+                x: x || Math.random() * flowCanvas.width,
+                y: y || Math.random() * flowCanvas.height,
+                size: flowConfig.particleSize.min + Math.random() * (flowConfig.particleSize.max - flowConfig.particleSize.min),
+                color: colors.flowParticles[colorIndex],
+                originalColor: colors.flowParticles[colorIndex],
+                speed: flowConfig.speed.min + Math.random() * (flowConfig.speed.max - flowConfig.speed.min),
+                velocityX: (Math.random() - 0.5) * 2,
+                velocityY: (Math.random() - 0.5) * 2,
+                angle: Math.random() * Math.PI * 2,
+                isInfluenced: false,
+                lastInfluenced: 0
+            };
+            
+            particles.push(particle);
+            return particle;
+        }
+        
+        function updateParticles() {
+            // Calculate mouse velocity
+            if (mouse.lastX !== undefined && mouse.lastY !== undefined) {
+                mouse.velocity.x = mouse.x - mouse.lastX;
+                mouse.velocity.y = mouse.y - mouse.lastY;
+            }
+            mouse.lastX = mouse.x;
+            mouse.lastY = mouse.y;
+
+            // Update each particle
+            for (const particle of particles) {
+                // Default flow behavior
+                switch (flowConfig.mode) {
+                    case 'flow':
+                        // Smooth flowing effect changing over time
+                        const time = Date.now() * 0.001;
+                        const flowX = Math.sin(time * 0.5 + particle.x * 0.01) * 0.5;
+                        const flowY = Math.cos(time * 0.3 + particle.y * 0.01) * 0.5;
+                        
+                        particle.velocityX = (particle.velocityX + flowX * 0.02) * 0.99;
+                        particle.velocityY = (particle.velocityY + flowY * 0.02) * 0.99;
+                        break;
+                        
+                    case 'orbit':
+                        // Orbital motion around center
+                        const centerX = flowCanvas.width / 2;
+                        const centerY = flowCanvas.height / 2;
+                        const dx = particle.x - centerX;
+                        const dy = particle.y - centerY;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        const angle = Math.atan2(dy, dx);
+                        
+                        // Apply tangential velocity
+                        const orbitSpeed = 0.5 * (1 - Math.min(dist, 300) / 300);
+                        particle.velocityX = -Math.sin(angle) * orbitSpeed;
+                        particle.velocityY = Math.cos(angle) * orbitSpeed;
+                        
+                        // Add radial component
+                        const targetDist = 100 + particle.size * 50;
+                        if (dist > targetDist) {
+                            particle.velocityX += -Math.cos(angle) * 0.02;
+                            particle.velocityY += -Math.sin(angle) * 0.02;
+                        } else if (dist < targetDist) {
+                            particle.velocityX += Math.cos(angle) * 0.02;
+                            particle.velocityY += Math.sin(angle) * 0.02;
+                        }
+                        break;
+                    
+                    case 'wave':
+                        // Wave-like motion
+                        const waveTime = Date.now() * 0.001;
+                        const yWave = Math.sin(waveTime + particle.x * 0.02) * 10;
+                        const xWave = Math.cos(waveTime * 0.7 + particle.y * 0.02) * 5;
+                        
+                        // Wave push effect
+                        particle.velocityY = (particle.velocityY + yWave * 0.01) * 0.98;
+                        particle.velocityX = (particle.velocityX + xWave * 0.01) * 0.98;
+                        break;
+                }
+                
+                // Mouse influence
+                if (mouse.isActive && mouse.x !== undefined && mouse.y !== undefined) {
+                    const dx = particle.x - mouse.x;
+                    const dy = particle.y - mouse.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < flowConfig.mouseInfluenceDistance) {
+                        // Mark particle as influenced
+                        particle.isInfluenced = true;
+                        particle.lastInfluenced = Date.now();
+                        
+                        // Calculate influence strength
+                        const force = (flowConfig.mouseInfluenceDistance - distance) / flowConfig.mouseInfluenceDistance;
+                        
+                        // Apply mouse velocity influence
+                        if (Math.abs(mouse.velocity.x) > 0.1 || Math.abs(mouse.velocity.y) > 0.1) {
+                            particle.velocityX += mouse.velocity.x * force * flowConfig.mouseForce;
+                            particle.velocityY += mouse.velocity.y * force * flowConfig.mouseForce;
+                        } else {
+                            // If mouse isn't moving, apply repulsion
+                            const angle = Math.atan2(dy, dx);
+                            particle.velocityX += Math.cos(angle) * force * 0.5;
+                            particle.velocityY += Math.sin(angle) * force * 0.5;
+                        }
+                        
+                        // Change color of influenced particles
+                        const influenceRatio = force * 0.8 + 0.2;
+                        particle.color = shiftColor(particle.originalColor, '#ffffff', influenceRatio);
+                    } else if (particle.isInfluenced) {
+                        // Gradually restore original color
+                        const timeSinceInfluence = Date.now() - particle.lastInfluenced;
+                        if (timeSinceInfluence > 500) {
+                            particle.isInfluenced = false;
+                            particle.color = particle.originalColor;
+                        } else {
+                            const ratio = 1 - timeSinceInfluence / 500;
+                            particle.color = shiftColor(particle.originalColor, '#ffffff', ratio);
+                        }
+                    }
+                }
+
+                // Update position
+                particle.x += particle.velocityX * particle.speed;
+                particle.y += particle.velocityY * particle.speed;
+                
+                // Wrap around edges
+                if (particle.x < 0) {
+                    particle.x = flowCanvas.width;
+                } else if (particle.x > flowCanvas.width) {
+                    particle.x = 0;
+                }
+                
+                if (particle.y < 0) {
+                    particle.y = flowCanvas.height;
+                } else if (particle.y > flowCanvas.height) {
+                    particle.y = 0;
+                }
+            }
+        }
+        
+        function shiftColor(color1, color2, ratio) {
+            if (color1.startsWith('#')) {
+                color1 = hexToRgb(color1);
+            }
+            if (color2.startsWith('#')) {
+                color2 = hexToRgb(color2);
+            }
+            
+            const r = Math.floor(color1.r + (color2.r - color1.r) * ratio);
+            const g = Math.floor(color1.g + (color2.g - color1.g) * ratio);
+            const b = Math.floor(color1.b + (color2.b - color1.b) * ratio);
+            
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+        
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+        
+        function drawParticles() {
+            flowCtx.clearRect(0, 0, flowCanvas.width, flowCanvas.height);
+            
+            // Set global composite operation for glow effects
+            flowCtx.globalCompositeOperation = 'lighter';
+            
+            // Draw connections between particles
+            flowCtx.globalAlpha = 0.2;
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < flowConfig.connectionDistance) {
+                        const alpha = 1 - distance / flowConfig.connectionDistance;
+                        flowCtx.strokeStyle = shiftColor(particles[i].color, particles[j].color, 0.5);
+                        flowCtx.globalAlpha = alpha * 0.15;
+                        flowCtx.lineWidth = Math.min(particles[i].size, particles[j].size) * 0.5;
+                        
+                        flowCtx.beginPath();
+                        flowCtx.moveTo(particles[i].x, particles[i].y);
+                        flowCtx.lineTo(particles[j].x, particles[j].y);
+                        flowCtx.stroke();
+                    }
+                }
+            }
+            
+            // Draw individual particles
+            flowCtx.globalAlpha = 1;
+            for (const particle of particles) {
+                flowCtx.fillStyle = particle.color;
+                flowCtx.beginPath();
+                flowCtx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                flowCtx.fill();
+                
+                // Add glow effect for influenced particles
+                if (particle.isInfluenced) {
+                    flowCtx.globalAlpha = 0.4;
+                    flowCtx.shadowBlur = 10;
+                    flowCtx.shadowColor = particle.color;
+                    flowCtx.beginPath();
+                    flowCtx.arc(particle.x, particle.y, particle.size * 2, 0, Math.PI * 2);
+                    flowCtx.fill();
+                    flowCtx.shadowBlur = 0;
+                    flowCtx.globalAlpha = 1;
+                }
+            }
+            
+            // Reset composite operation
+            flowCtx.globalCompositeOperation = 'source-over';
+        }
+        
+        function animateFlow() {
+            flowAnimationId = requestAnimationFrame(animateFlow);
+            updateParticles();
+            drawParticles();
+        }
+        
+        // Mode switching for flow animation
+        flowCanvas?.addEventListener('click', function() {
+            const modes = ['flow', 'orbit', 'wave'];
+            const currentIndex = modes.indexOf(flowConfig.mode);
+            const nextIndex = (currentIndex + 1) % modes.length;
+            flowConfig.mode = modes[nextIndex];
+        });
         
         // Snake animation functions
         function updateGridSize() {
