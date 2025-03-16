@@ -21,6 +21,16 @@
             --particle-color: rgba(0, 132, 255, 0.15);
             --tooltip-bg: rgba(0, 0, 0, 0.8);
             --tooltip-text: #ffffff;
+            
+            /* Snake colors */
+            --snake-bg: rgba(248, 249, 250, 0.97);
+            --snake-head: rgba(0, 132, 255, 0.9);
+            --snake-body: rgba(112, 0, 255, 0.7);
+            --snake-food: rgba(0, 201, 183, 0.8);
+            
+            /* Network colors */
+            --network-node: rgba(0, 132, 255, 0.8);
+            --network-connection: rgba(112, 0, 255, 0.5);
         }
         
         [data-theme="dark"] {
@@ -37,6 +47,16 @@
             --particle-color: rgba(255, 255, 255, 0.2);
             --tooltip-bg: rgba(255, 255, 255, 0.9);
             --tooltip-text: #121212;
+            
+            /* Snake colors for dark theme */
+            --snake-bg: rgba(18, 18, 18, 0.97);
+            --snake-head: rgba(0, 195, 255, 0.9);
+            --snake-body: rgba(155, 89, 255, 0.7);
+            --snake-food: rgba(0, 255, 208, 0.8);
+            
+            /* Network colors for dark theme */
+            --network-node: rgba(0, 195, 255, 0.8);
+            --network-connection: rgba(155, 89, 255, 0.5);
         }
         
         * {
@@ -102,6 +122,23 @@
             }
         }
         
+        @keyframes foodPulse {
+            0% { transform: scale(0.9); opacity: 0.7; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.7; }
+        }
+        
+        @keyframes snakePop {
+            0% { transform: scale(1.3); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        @keyframes snakeDeath {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.7; }
+            100% { transform: scale(0); opacity: 0; }
+        }
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
@@ -124,8 +161,8 @@
                 radial-gradient(circle at 75% 75%, rgba(112, 0, 255, 0.1) 0%, transparent 50%);
         }
         
-        /* Canvas container for network animation */
-        #canvas-container {
+        /* Animation containers */
+        .animation-container {
             position: fixed;
             top: 0;
             left: 0;
@@ -135,14 +172,92 @@
             pointer-events: none;
             opacity: 1;
             transition: opacity 0.5s ease;
+            display: none;
         }
         
-        #canvas-container.disabled {
+        .animation-container.active {
+            display: block;
+        }
+        
+        .animation-container.disabled {
             opacity: 0;
         }
         
-        canvas {
+        /* Canvas for network animation */
+        #network-container canvas {
             display: block;
+        }
+        
+        /* Snake animation styles */
+        #snake-container {
+            background-color: var(--snake-bg);
+            overflow: hidden;
+        }
+        
+        .snake-segment {
+            position: absolute;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        
+        .snake-head {
+            background-color: var(--snake-head);
+            box-shadow: 0 0 10px var(--snake-head);
+            z-index: 2;
+            border-radius: 6px;
+        }
+        
+        .snake-body {
+            background-color: var(--snake-body);
+            box-shadow: 0 0 5px var(--snake-body);
+            z-index: 1;
+        }
+        
+        .snake-food {
+            position: absolute;
+            background-color: var(--snake-food);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--snake-food);
+            animation: foodPulse 2s infinite ease-in-out;
+            z-index: 1;
+        }
+        
+        /* Particles background */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+        
+        .particles.disabled {
+            opacity: 0;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background-color: var(--particle-color);
+            border-radius: 50%;
+        }
+        
+        /* Cursor follower particles */
+        .cursor-particle {
+            pointer-events: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            border-radius: 50%;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            animation: fadeOut 1s forwards;
         }
         
         /* Make sections semi-transparent with blur effect */
@@ -180,8 +295,8 @@
             z-index: 1000;
         }
         
-        /* Theme toggle */
-        .theme-toggle, .animation-toggle {
+        /* Control buttons */
+        .theme-toggle, .animation-toggle, .animation-switch {
             width: 45px;
             height: 45px;
             background-color: var(--card-bg);
@@ -194,12 +309,12 @@
             transition: all 0.3s ease;
         }
         
-        .theme-toggle:hover, .animation-toggle:hover {
+        .theme-toggle:hover, .animation-toggle:hover, .animation-switch:hover {
             transform: translateY(-3px);
             box-shadow: 0 5px 15px var(--shadow-hover);
         }
         
-        .theme-toggle i, .animation-toggle i {
+        .theme-toggle i, .animation-toggle i, .animation-switch i {
             font-size: 1.3rem;
             color: var(--primary-color);
             transition: all 0.3s ease;
@@ -224,46 +339,9 @@
         }
         
         .theme-toggle:hover .control-tooltip,
-        .animation-toggle:hover .control-tooltip {
+        .animation-toggle:hover .control-tooltip,
+        .animation-switch:hover .control-tooltip {
             opacity: 1;
-        }
-        
-        /* Particle animation background */
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            overflow: hidden;
-            pointer-events: none;
-            opacity: 1;
-            transition: opacity 0.5s ease;
-        }
-        
-        .particles.disabled {
-            opacity: 0;
-        }
-        
-        .particle {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background-color: var(--particle-color);
-            border-radius: 50%;
-        }
-        
-        /* Cursor follower particles */
-        .cursor-particle {
-            pointer-events: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            border-radius: 50%;
-            z-index: 9999;
-            transform: translate(-50%, -50%);
-            animation: fadeOut 1s forwards;
         }
         
         header {
@@ -751,9 +829,15 @@
 <body>
     <!-- Controls bar -->
     <div class="controls-bar">
+        <!-- Animation switch button -->
+        <div class="animation-switch" id="animation-switch">
+            <i class="fas fa-random"></i>
+            <span class="control-tooltip">Switch Animation</span>
+        </div>
+        
         <!-- Animation toggle button -->
         <div class="animation-toggle" id="animation-toggle">
-            <i class="fas fa-play"></i>
+            <i class="fas fa-pause"></i>
             <span class="control-tooltip">Toggle Animation</span>
         </div>
         
@@ -764,9 +848,13 @@
         </div>
     </div>
     
-    <!-- Canvas container for network animation -->
-    <div id="canvas-container">
+    <!-- Animation containers -->
+    <div id="network-container" class="animation-container">
         <canvas id="nodes-canvas"></canvas>
+    </div>
+    
+    <div id="snake-container" class="animation-container">
+        <!-- No grid, just the container for snake elements -->
     </div>
     
     <!-- Particles background -->
@@ -870,10 +958,20 @@
     </div>
     
     <script>
-        // Canvas and animation variables
+        // Animation types
+        const ANIMATIONS = {
+            NETWORK: 'network',
+            SNAKE: 'snake'
+        };
+        
+        // Global animation variables
+        let animationEnabled = true;
+        let currentAnimation = null;
+        
+        // Network animation variables
         let canvas, ctx;
         let nodes = [];
-        let animationFrameId;
+        let networkAnimationId;
         let mouseNode = {
             x: undefined,
             y: undefined,
@@ -886,17 +984,28 @@
             accent: '',
             background: ''
         };
-        let animationEnabled = true;
         
-        // Theme toggle functionality
+        // Snake animation variables
+        let snakeIntervals = [];
+        let snakes = [];
+        const snakeConfig = {
+            gridSize: { rows: 30, cols: 40 },
+            speed: 150,
+            maxSnakes: 6,
+            segmentSize: 20,
+            minLength: 3, // Minimum length a snake can have
+            initialLength: 5, // Initial length of a new snake
+            turnChance: 0.08 // Chance to turn at each step (only left or right)
+        };
+        
+        // Initialize on document load
         document.addEventListener('DOMContentLoaded', function() {
             const themeToggle = document.getElementById('theme-toggle');
             const animationToggle = document.getElementById('animation-toggle');
+            const animationSwitch = document.getElementById('animation-switch');
             const htmlElement = document.documentElement;
             const themeIcon = themeToggle.querySelector('i');
             const animationIcon = animationToggle.querySelector('i');
-            const canvasContainer = document.getElementById('canvas-container');
-            const particlesContainer = document.getElementById('particles');
             
             // Check for saved theme preference
             const savedTheme = localStorage.getItem('theme');
@@ -913,17 +1022,20 @@
                 updateAnimationIcon(false);
             }
             
-            // Setup canvas
-            canvas = document.getElementById('nodes-canvas');
-            ctx = canvas.getContext('2d');
-            
-            // Initialize the network animation if enabled
-            if (animationEnabled) {
-                updateColors();
-                resizeCanvas();
-                initNodes();
-                animate();
+            // Check for saved animation type preference
+            const savedAnimationType = localStorage.getItem('animationType');
+            if (savedAnimationType && Object.values(ANIMATIONS).includes(savedAnimationType)) {
+                currentAnimation = savedAnimationType;
+            } else {
+                // Randomly select an animation if none is saved
+                currentAnimation = Math.random() < 0.5 ? ANIMATIONS.NETWORK : ANIMATIONS.SNAKE;
             }
+            
+            // Initialize animations
+            initAnimations();
+            
+            // Update UI to reflect active animation
+            activateAnimation(currentAnimation);
             
             // Toggle animation on click
             animationToggle.addEventListener('click', function() {
@@ -934,87 +1046,19 @@
                 
                 if (animationEnabled) {
                     // Restart animations
-                    updateColors();
-                    resizeCanvas();
-                    initNodes();
-                    animate();
-                    regenerateParticles();
-                    
-                    // Re-enable cursor particles
-                    document.addEventListener('mousemove', handleMouseMove);
-                    document.addEventListener('touchmove', handleTouchMove);
+                    restartCurrentAnimation();
                 } else {
                     // Stop animations
-                    if (animationFrameId) {
-                        cancelAnimationFrame(animationFrameId);
-                    }
-                    
-                    // Remove cursor particle event listeners
-                    document.removeEventListener('mousemove', handleMouseMove);
-                    document.removeEventListener('touchmove', handleTouchMove);
+                    stopAllAnimations();
                 }
             });
             
-            function toggleAnimation(enabled) {
-                if (enabled) {
-                    canvasContainer.classList.remove('disabled');
-                    particlesContainer.classList.remove('disabled');
+            // Switch animation on click
+            animationSwitch.addEventListener('click', function() {
+                if (currentAnimation === ANIMATIONS.NETWORK) {
+                    switchAnimation(ANIMATIONS.SNAKE);
                 } else {
-                    canvasContainer.classList.add('disabled');
-                    particlesContainer.classList.add('disabled');
-                }
-            }
-            
-            function updateAnimationIcon(enabled) {
-                if (enabled) {
-                    animationIcon.classList.remove('fa-play');
-                    animationIcon.classList.add('fa-pause');
-                    animationToggle.querySelector('.control-tooltip').textContent = 'Disable Animation';
-                } else {
-                    animationIcon.classList.remove('fa-pause');
-                    animationIcon.classList.add('fa-play');
-                    animationToggle.querySelector('.control-tooltip').textContent = 'Enable Animation';
-                }
-            }
-            
-            // Handle mouse/touch interaction for network animation
-            function handleMouseMove(e) {
-                mouseNode.x = e.clientX;
-                mouseNode.y = e.clientY;
-                mouseNode.isActive = true;
-                
-                if (animationEnabled) {
-                    createCursorParticle(e.clientX, e.clientY);
-                }
-            }
-            
-            function handleTouchMove(e) {
-                e.preventDefault();
-                if (e.touches && e.touches[0]) {
-                    mouseNode.x = e.touches[0].clientX;
-                    mouseNode.y = e.touches[0].clientY;
-                    mouseNode.isActive = true;
-                    
-                    if (animationEnabled) {
-                        createCursorParticle(e.touches[0].clientX, e.touches[0].clientY);
-                    }
-                }
-            }
-            
-            canvas.addEventListener('mousemove', handleMouseMove);
-            canvas.addEventListener('mouseleave', function() {
-                mouseNode.isActive = false;
-            });
-            canvas.addEventListener('touchmove', handleTouchMove);
-            canvas.addEventListener('touchend', function() {
-                mouseNode.isActive = false;
-            });
-            
-            // Handle window resize for canvas
-            window.addEventListener('resize', function() {
-                if (animationEnabled) {
-                    resizeCanvas();
-                    initNodes();
+                    switchAnimation(ANIMATIONS.NETWORK);
                 }
             });
             
@@ -1028,7 +1072,7 @@
                 updateThemeIcon(newTheme);
                 
                 if (animationEnabled) {
-                    // Update colors for network animation
+                    // Update colors for animations
                     updateColors();
                     
                     // Regenerate particles for the new theme
@@ -1043,6 +1087,18 @@
                 } else {
                     themeIcon.classList.remove('fa-sun');
                     themeIcon.classList.add('fa-moon');
+                }
+            }
+            
+            function updateAnimationIcon(enabled) {
+                if (enabled) {
+                    animationIcon.classList.remove('fa-play');
+                    animationIcon.classList.add('fa-pause');
+                    animationToggle.querySelector('.control-tooltip').textContent = 'Disable Animation';
+                } else {
+                    animationIcon.classList.remove('fa-pause');
+                    animationIcon.classList.add('fa-play');
+                    animationToggle.querySelector('.control-tooltip').textContent = 'Enable Animation';
                 }
             }
             
@@ -1076,16 +1132,183 @@
                 }, 2000);
             });
             
-            // Initialize particles if animation is enabled
+            // Initialize particles
             if (animationEnabled) {
                 regenerateParticles();
+                
                 // Initialize cursor follower particles
                 document.addEventListener('mousemove', handleMouseMove);
                 document.addEventListener('touchmove', handleTouchMove);
             }
+            
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                if (animationEnabled) {
+                    if (currentAnimation === ANIMATIONS.NETWORK) {
+                        resizeCanvas();
+                        initNodes();
+                    } else if (currentAnimation === ANIMATIONS.SNAKE) {
+                        updateGridSize();
+                        resetSnakeGame();
+                        spawnSnakes();
+                    }
+                }
+            });
         });
         
-        // Network animation functions
+        // Mouse/touch handlers
+        function handleMouseMove(e) {
+            if (currentAnimation === ANIMATIONS.NETWORK) {
+                mouseNode.x = e.clientX;
+                mouseNode.y = e.clientY;
+                mouseNode.isActive = true;
+            }
+            
+            if (animationEnabled) {
+                createCursorParticle(e.clientX, e.clientY);
+            }
+        }
+        
+        function handleTouchMove(e) {
+            e.preventDefault();
+            if (e.touches && e.touches[0]) {
+                if (currentAnimation === ANIMATIONS.NETWORK) {
+                    mouseNode.x = e.touches[0].clientX;
+                    mouseNode.y = e.touches[0].clientY;
+                    mouseNode.isActive = true;
+                }
+                
+                if (animationEnabled) {
+                    createCursorParticle(e.touches[0].clientX, e.touches[0].clientY);
+                }
+            }
+        }
+        
+        // Initialize all animations
+        function initAnimations() {
+            // Initialize network animation
+            canvas = document.getElementById('nodes-canvas');
+            ctx = canvas.getContext('2d');
+            
+            // Setup event listeners for network animation
+            canvas.addEventListener('mousemove', handleMouseMove);
+            canvas.addEventListener('mouseleave', function() {
+                mouseNode.isActive = false;
+            });
+            canvas.addEventListener('touchmove', handleTouchMove);
+            canvas.addEventListener('touchend', function() {
+                mouseNode.isActive = false;
+            });
+            
+            // Initialize colors
+            updateColors();
+        }
+        
+        // Toggle all animations
+        function toggleAnimation(enabled) {
+            const networkContainer = document.getElementById('network-container');
+            const snakeContainer = document.getElementById('snake-container');
+            const particlesContainer = document.getElementById('particles');
+            
+            if (enabled) {
+                networkContainer.classList.remove('disabled');
+                snakeContainer.classList.remove('disabled');
+                particlesContainer.classList.remove('disabled');
+            } else {
+                networkContainer.classList.add('disabled');
+                snakeContainer.classList.add('disabled');
+                particlesContainer.classList.add('disabled');
+            }
+        }
+        
+        // Switch between animations
+        function switchAnimation(newAnimation) {
+            // Stop current animation
+            deactivateAnimation(currentAnimation);
+            
+            // Set and save new animation
+            currentAnimation = newAnimation;
+            localStorage.setItem('animationType', newAnimation);
+            
+            // Start new animation
+            activateAnimation(newAnimation);
+        }
+        
+        // Activate specific animation
+        function activateAnimation(animation) {
+            const networkContainer = document.getElementById('network-container');
+            const snakeContainer = document.getElementById('snake-container');
+            
+            if (animation === ANIMATIONS.NETWORK) {
+                networkContainer.classList.add('active');
+                snakeContainer.classList.remove('active');
+                
+                if (animationEnabled) {
+                    resizeCanvas();
+                    initNodes();
+                    animate();
+                }
+            } else if (animation === ANIMATIONS.SNAKE) {
+                networkContainer.classList.remove('active');
+                snakeContainer.classList.add('active');
+                
+                if (animationEnabled) {
+                    updateGridSize();
+                    spawnSnakes();
+                }
+            }
+        }
+        
+        // Deactivate specific animation
+        function deactivateAnimation(animation) {
+            if (animation === ANIMATIONS.NETWORK) {
+                if (networkAnimationId) {
+                    cancelAnimationFrame(networkAnimationId);
+                    networkAnimationId = null;
+                }
+            } else if (animation === ANIMATIONS.SNAKE) {
+                clearSnakeIntervals();
+                resetSnakeGame();
+            }
+        }
+        
+        // Stop all animations
+        function stopAllAnimations() {
+            // Stop network animation
+            if (networkAnimationId) {
+                cancelAnimationFrame(networkAnimationId);
+                networkAnimationId = null;
+            }
+            
+            // Stop snake animation
+            clearSnakeIntervals();
+            resetSnakeGame();
+            
+            // Remove cursor particle event listeners
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('touchmove', handleTouchMove);
+        }
+        
+        // Restart current animation
+        function restartCurrentAnimation() {
+            if (currentAnimation === ANIMATIONS.NETWORK) {
+                resizeCanvas();
+                initNodes();
+                animate();
+            } else if (currentAnimation === ANIMATIONS.SNAKE) {
+                updateGridSize();
+                spawnSnakes();
+            }
+            
+            // Re-enable cursor particles
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('touchmove', handleTouchMove);
+            
+            // Regenerate background particles
+            regenerateParticles();
+        }
+        
+        // Update colors from CSS variables
         function updateColors() {
             const style = getComputedStyle(document.documentElement);
             
@@ -1103,6 +1326,7 @@
             }
         }
         
+        // Network animation functions
         function resizeCanvas() {
             if (canvas) {
                 canvas.width = window.innerWidth;
@@ -1128,7 +1352,7 @@
         }
         
         function animate() {
-            animationFrameId = requestAnimationFrame(animate);
+            networkAnimationId = requestAnimationFrame(animate);
             
             // Clear canvas
             ctx.fillStyle = colors.background;
@@ -1251,7 +1475,449 @@
             }
         }
         
-        // Create background particles
+        // Snake animation functions
+        function updateGridSize() {
+            const containerWidth = window.innerWidth;
+            const containerHeight = window.innerHeight;
+            
+            // Adjust segment size based on screen dimensions
+            snakeConfig.segmentSize = Math.max(10, Math.min(20, Math.floor(Math.min(containerWidth, containerHeight) / 40)));
+            
+            // Calculate grid size
+            snakeConfig.gridSize.cols = Math.floor(containerWidth / snakeConfig.segmentSize);
+            snakeConfig.gridSize.rows = Math.floor(containerHeight / snakeConfig.segmentSize);
+        }
+        
+        function clearSnakeIntervals() {
+            snakeIntervals.forEach(interval => clearInterval(interval));
+            snakeIntervals = [];
+        }
+        
+        function resetSnakeGame() {
+            clearSnakeIntervals();
+            snakes = [];
+            
+            // Remove all snake segments and food
+            document.querySelectorAll('.snake-segment, .snake-food').forEach(el => el.remove());
+        }
+        
+        function spawnSnakes() {
+            resetSnakeGame();
+            
+            // Determine number of snakes based on screen size
+            const snakeCount = Math.min(Math.max(Math.floor(window.innerWidth / 250), 2), snakeConfig.maxSnakes);
+            
+            for (let i = 0; i < snakeCount; i++) {
+                createSnake();
+            }
+        }
+        
+        function createSnake() {
+            const container = document.getElementById('snake-container');
+            
+            // Generate random starting position
+            const x = Math.floor(Math.random() * (snakeConfig.gridSize.cols - 10)) + 5;
+            const y = Math.floor(Math.random() * (snakeConfig.gridSize.rows - 10)) + 5;
+            
+            // Choose a random initial direction
+            const directions = [
+                { x: 1, y: 0 },   // Right
+                { x: -1, y: 0 },  // Left
+                { x: 0, y: 1 },   // Down
+                { x: 0, y: -1 }   // Up
+            ];
+            const initialDirection = directions[Math.floor(Math.random() * directions.length)];
+            
+            // Create snake with initial segments based on direction
+            const segments = [];
+            for (let i = 0; i < snakeConfig.initialLength; i++) {
+                segments.push({ 
+                    x: x - (initialDirection.x * i), 
+                    y: y - (initialDirection.y * i) 
+                });
+            }
+            
+            const snake = {
+                segments: segments,
+                direction: initialDirection,
+                food: null,
+                dead: false
+            };
+            
+            // Add to snakes array
+            snakes.push(snake);
+            
+            // Render initial snake
+            renderSnake(snake);
+            
+            // Place food for this snake
+            placeFood(snake);
+            
+            // Start snake movement
+            const interval = setInterval(() => {
+                if (animationEnabled && currentAnimation === ANIMATIONS.SNAKE) {
+                    if (!snake.dead) {
+                        moveSnake(snake);
+                    }
+                }
+            }, snakeConfig.speed);
+            
+            snakeIntervals.push(interval);
+        }
+        
+        function renderSnake(snake) {
+            const container = document.getElementById('snake-container');
+            
+            // Remove existing snake segments
+            document.querySelectorAll(`.snake-segment[data-snake-id="${snakes.indexOf(snake)}"]`).forEach(el => el.remove());
+            
+            // Render snake segments
+            snake.segments.forEach((segment, index) => {
+                const segmentElement = document.createElement('div');
+                segmentElement.className = `snake-segment ${index === 0 ? 'snake-head' : 'snake-body'}`;
+                segmentElement.dataset.snakeId = snakes.indexOf(snake);
+                segmentElement.style.width = `${snakeConfig.segmentSize - 2}px`;
+                segmentElement.style.height = `${snakeConfig.segmentSize - 2}px`;
+                segmentElement.style.left = `${segment.x * snakeConfig.segmentSize}px`;
+                segmentElement.style.top = `${segment.y * snakeConfig.segmentSize}px`;
+                
+                // Add pop animation for new heads
+                if (index === 0) {
+                    segmentElement.style.animation = 'snakePop 0.2s ease-out';
+                }
+                
+                container.appendChild(segmentElement);
+            });
+        }
+        
+        function placeFood(snake) {
+            const container = document.getElementById('snake-container');
+            
+            // Remove existing food
+            if (snake.food) {
+                document.querySelector(`.snake-food[data-snake-id="${snakes.indexOf(snake)}"]`)?.remove();
+            }
+            
+            // Find an empty position for food
+            let foodPos;
+            let attempts = 0;
+            const maxAttempts = 50;
+            
+            do {
+                foodPos = {
+                    x: Math.floor(Math.random() * snakeConfig.gridSize.cols),
+                    y: Math.floor(Math.random() * snakeConfig.gridSize.rows)
+                };
+                attempts++;
+                
+                if (attempts > maxAttempts) {
+                    // If we can't find an empty spot after many attempts, just place it anywhere
+                    break;
+                }
+            } while (isPositionOccupied(foodPos));
+            
+            snake.food = foodPos;
+            
+            // Create food element
+            const foodElement = document.createElement('div');
+            foodElement.className = 'snake-food';
+            foodElement.dataset.snakeId = snakes.indexOf(snake);
+            foodElement.style.width = `${snakeConfig.segmentSize - 4}px`;
+            foodElement.style.height = `${snakeConfig.segmentSize - 4}px`;
+            foodElement.style.left = `${foodPos.x * snakeConfig.segmentSize + 2}px`;
+            foodElement.style.top = `${foodPos.y * snakeConfig.segmentSize + 2}px`;
+            
+            container.appendChild(foodElement);
+        }
+        
+        function isPositionOccupied(pos) {
+            for (const snake of snakes) {
+                for (const segment of snake.segments) {
+                    if (segment.x === pos.x && segment.y === pos.y) {
+                        return true;
+                    }
+                }
+                if (snake.food && snake.food.x === pos.x && snake.food.y === pos.y) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        function moveSnake(snake) {
+            // Randomly decide if snake should turn
+            if (Math.random() < snakeConfig.turnChance) {
+                // Turn left or right (not backwards)
+                turnSnake(snake);
+            }
+            
+            // Calculate next head position
+            const head = snake.segments[0];
+            const newHead = {
+                x: head.x + snake.direction.x,
+                y: head.y + snake.direction.y
+            };
+            
+            // Check if the snake would hit a wall
+            if (newHead.x < 0 || newHead.x >= snakeConfig.gridSize.cols || 
+                newHead.y < 0 || newHead.y >= snakeConfig.gridSize.rows) {
+                // Turn to avoid the wall
+                turnAwayFromWall(snake);
+                return; // Skip this movement
+            }
+            
+            // Check if snake would hit itself (cannibalism)
+            let selfCollision = false;
+            for (let i = 1; i < snake.segments.length; i++) {
+                const segment = snake.segments[i];
+                if (newHead.x === segment.x && newHead.y === segment.y) {
+                    // Snake is eating itself - remove the segments it "eats"
+                    selfCollision = true;
+                    snake.segments = snake.segments.slice(0, i);
+                    
+                    // Remove corresponding DOM elements
+                    const snakeId = snakes.indexOf(snake);
+                    const elementsToRemove = document.querySelectorAll(`.snake-segment[data-snake-id="${snakeId}"]`);
+                    if (elementsToRemove.length > i) {
+                        for (let j = i; j < elementsToRemove.length; j++) {
+                            elementsToRemove[j].remove();
+                        }
+                    }
+                    
+                    break;
+                }
+            }
+            
+            // Check for collisions with other snakes
+            let otherSnakeCollision = false;
+            let headOnCollision = false;
+            
+            for (let i = 0; i < snakes.length; i++) {
+                const otherSnake = snakes[i];
+                if (otherSnake !== snake && !otherSnake.dead) {
+                    
+                    // Check for head-on collision (both heads collide)
+                    if (newHead.x === otherSnake.segments[0].x + otherSnake.direction.x && 
+                        newHead.y === otherSnake.segments[0].y + otherSnake.direction.y) {
+                        headOnCollision = true;
+                        killSnake(otherSnake);
+                        killSnake(snake);
+                        break;
+                    }
+                    
+                    // Check for collision with other snake's body
+                    for (let j = 0; j < otherSnake.segments.length; j++) {
+                        const otherSegment = otherSnake.segments[j];
+                        if (newHead.x === otherSegment.x && newHead.y === otherSegment.y) {
+                            otherSnakeCollision = true;
+                            
+                            if (j === 0) {
+                                // Head-to-head collision - both snakes die
+                                killSnake(otherSnake);
+                                killSnake(snake);
+                            } else {
+                                // Eat the other snake's body from this point
+                                const eatenSegments = otherSnake.segments.splice(j);
+                                
+                                // Remove eaten segments from DOM
+                                const otherSnakeId = snakes.indexOf(otherSnake);
+                                for (let k = j; k < otherSnake.segments.length + eatenSegments.length; k++) {
+                                    document.querySelector(`.snake-segment[data-snake-id="${otherSnakeId}"][style*="left: ${otherSegment.x * snakeConfig.segmentSize}px"][style*="top: ${otherSegment.y * snakeConfig.segmentSize}px"]`)?.remove();
+                                }
+                                
+                                // Update the other snake's rendering
+                                renderSnake(otherSnake);
+                                
+                                // Check if the other snake has become too short
+                                if (otherSnake.segments.length < snakeConfig.minLength) {
+                                    killSnake(otherSnake);
+                                }
+                            }
+                            break;
+                        }
+                    }
+                    
+                    if (headOnCollision || otherSnakeCollision) break;
+                }
+            }
+            
+            // If snake died due to collision, don't continue
+            if (snake.dead) return;
+            
+            // Check if food is eaten
+            let ateFood = false;
+            if (snake.food && newHead.x === snake.food.x && newHead.y === snake.food.y) {
+                ateFood = true;
+                placeFood(snake); // Place new food
+            }
+            
+            // Add new head
+            snake.segments.unshift(newHead);
+            
+            // If we didn't eat food or hit anything, remove the tail 
+            if (!ateFood && !selfCollision && !otherSnakeCollision) {
+                snake.segments.pop(); // Remove tail
+            }
+            
+            // Check if snake should move toward food
+            if (snake.food && Math.random() < 0.3) {
+                moveTowardFood(snake);
+            }
+            
+            // Render updated snake
+            renderSnake(snake);
+        }
+        
+        // Turn snake left or right (not backwards)
+        function turnSnake(snake) {
+            // Define left and right turns based on current direction
+            const turns = {
+                'up': ['left', 'right'],
+                'down': ['right', 'left'],
+                'left': ['down', 'up'],
+                'right': ['up', 'down']
+            };
+            
+            // Convert direction to string for lookup
+            let directionStr;
+            if (snake.direction.x === 1) directionStr = 'right';
+            else if (snake.direction.x === -1) directionStr = 'left';
+            else if (snake.direction.y === 1) directionStr = 'down';
+            else if (snake.direction.y === -1) directionStr = 'up';
+            
+            // Get possible turns
+            const possibleTurns = turns[directionStr];
+            
+            // Choose a random turn
+            const turn = possibleTurns[Math.floor(Math.random() * 2)];
+            
+            // Apply the new direction
+            switch (turn) {
+                case 'up':
+                    snake.direction = { x: 0, y: -1 };
+                    break;
+                case 'down':
+                    snake.direction = { x: 0, y: 1 };
+                    break;
+                case 'left':
+                    snake.direction = { x: -1, y: 0 };
+                    break;
+                case 'right':
+                    snake.direction = { x: 1, y: 0 };
+                    break;
+            }
+        }
+        
+        // Turn away from a wall
+        function turnAwayFromWall(snake) {
+            const head = snake.segments[0];
+            
+            // Check which directions are available (not walls)
+            const availableDirections = [];
+            
+            if (head.x > 0) availableDirections.push({ x: -1, y: 0 }); // Left
+            if (head.x < snakeConfig.gridSize.cols - 1) availableDirections.push({ x: 1, y: 0 }); // Right
+            if (head.y > 0) availableDirections.push({ x: 0, y: -1 }); // Up
+            if (head.y < snakeConfig.gridSize.rows - 1) availableDirections.push({ x: 0, y: 1 }); // Down
+            
+            // Filter out the opposite of current direction (no 180° turns)
+            const validDirections = availableDirections.filter(dir => 
+                !(dir.x === -snake.direction.x && dir.y === -snake.direction.y)
+            );
+            
+            if (validDirections.length > 0) {
+                // Choose a random direction from valid ones
+                snake.direction = validDirections[Math.floor(Math.random() * validDirections.length)];
+            }
+            // If no valid direction (trapped in corner), we'll just let it hit the wall and die
+        }
+        
+        function killSnake(snake) {
+            snake.dead = true;
+            
+            // Animate death
+            const snakeId = snakes.indexOf(snake);
+            const segments = document.querySelectorAll(`.snake-segment[data-snake-id="${snakeId}"]`);
+            
+            segments.forEach((segment, index) => {
+                segment.style.animation = `snakeDeath 0.5s ${index * 0.05}s forwards`;
+                
+                // Remove after animation completes
+                setTimeout(() => {
+                    segment.remove();
+                }, 500 + index * 50);
+            });
+            
+            // Remove food
+            document.querySelector(`.snake-food[data-snake-id="${snakeId}"]`)?.remove();
+            
+            // Create a new snake after a delay
+            setTimeout(() => {
+                if (animationEnabled && currentAnimation === ANIMATIONS.SNAKE) {
+                    createSnake();
+                }
+            }, 1500);
+        }
+        
+        function moveTowardFood(snake) {
+            if (!snake.food) return;
+            
+            const head = snake.segments[0];
+            
+            // Current direction as string
+            let currentDir;
+            if (snake.direction.x === 1) currentDir = 'right';
+            else if (snake.direction.x === -1) currentDir = 'left';
+            else if (snake.direction.y === 1) currentDir = 'down';
+            else if (snake.direction.y === -1) currentDir = 'up';
+            
+            // Potential directions to get to food
+            let potentialDirs = [];
+            
+            // Horizontal movement needed
+            if (head.x < snake.food.x) {
+                potentialDirs.push('right');
+            } else if (head.x > snake.food.x) {
+                potentialDirs.push('left');
+            }
+            
+            // Vertical movement needed
+            if (head.y < snake.food.y) {
+                potentialDirs.push('down');
+            } else if (head.y > snake.food.y) {
+                potentialDirs.push('up');
+            }
+            
+            // If we have potential directions and need to change direction
+            if (potentialDirs.length > 0 && !potentialDirs.includes(currentDir)) {
+                // Filter directions that would cause a 180° turn
+                const opposites = { 'up': 'down', 'down': 'up', 'left': 'right', 'right': 'left' };
+                potentialDirs = potentialDirs.filter(dir => dir !== opposites[currentDir]);
+                
+                // If we still have valid directions, choose one randomly
+                if (potentialDirs.length > 0) {
+                    const newDir = potentialDirs[Math.floor(Math.random() * potentialDirs.length)];
+                    
+                    // Set the new direction
+                    switch (newDir) {
+                        case 'up':
+                            snake.direction = { x: 0, y: -1 };
+                            break;
+                        case 'down':
+                            snake.direction = { x: 0, y: 1 };
+                            break;
+                        case 'left':
+                            snake.direction = { x: -1, y: 0 };
+                            break;
+                        case 'right':
+                            snake.direction = { x: 1, y: 0 };
+                            break;
+                    }
+                }
+            }
+        }
+        
+        // Background particles functions
         function regenerateParticles() {
             const particlesContainer = document.getElementById('particles');
             // Clear existing particles
@@ -1290,6 +1956,7 @@
             }
         }
         
+        // Cursor particles
         function createCursorParticle(x, y) {
             if (!animationEnabled) return;
             
