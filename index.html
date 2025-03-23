@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Defa Zhu | 朱德发 - Personal Website</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Counter.dev official tracking script -->
+    <script src="https://cdn.counter.dev/script.js" data-id="b67d050f-3dc2-46a2-99cc-125193342e4f" data-utcoffset="8"></script>
     <style>
         :root {
             /* Light theme (default) */
@@ -1048,43 +1050,37 @@
         </footer>
     </div>
     
-    <!-- Counter.dev tracking script -->
+    <!-- Visitor counter script -->
     <script>
-        if(!sessionStorage.getItem("_swa")&&document.referrer.indexOf(location.protocol+"//"+location.host)!== 0){
-            fetch("https://counter.dev/track?"+new URLSearchParams({
-                referrer:document.referrer,
-                screen:screen.width+"x"+screen.height,
-                user:"zhudefa", // Your username on counter.dev
-                utcoffset:"8" // Your UTC offset
-            }))
-            .then(response => response.json())
-            .then(data => {
-                if(data && data.hasOwnProperty('pageviews')) {
-                    // Update counter with actual value from counter.dev
-                    document.getElementById('visit-count').textContent = data.pageviews.toLocaleString();
-                    // Store in session storage to remember count
-                    sessionStorage.setItem("_swa", "1");
-                    sessionStorage.setItem("_swa_pageviews", data.pageviews);
-                }
-            })
-            .catch(error => {
-                console.log('Counter error:', error);
-                // Fallback to a reasonable number
-                const startCount = localStorage.getItem('visit-fallback-count') || 1500;
-                document.getElementById('visit-count').textContent = parseInt(startCount).toLocaleString();
-                // Increment local fallback count to simulate counting
-                localStorage.setItem('visit-fallback-count', parseInt(startCount) + 1);
-            });
-        } else {
-            // For returning visitors in same session, show the stored count
-            const storedCount = sessionStorage.getItem("_swa_pageviews");
-            if (storedCount) {
-                document.getElementById('visit-count').textContent = parseInt(storedCount).toLocaleString();
-            } else {
-                // Fallback if no stored count
-                const fallbackCount = localStorage.getItem('visit-fallback-count') || 1500;
-                document.getElementById('visit-count').textContent = parseInt(fallbackCount).toLocaleString();
-            }
+        // 获取访问计数并显示
+        window.addEventListener('load', function() {
+            // 延迟执行，确保Counter.dev脚本有时间加载和初始化
+            setTimeout(() => {
+                // 使用Counter.dev API获取统计数据
+                fetch(`https://api.counter.dev/stats/${encodeURIComponent('b67d050f-3dc2-46a2-99cc-125193342e4f')}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // 更新计数显示
+                        if (data && data.hasOwnProperty('pageviews')) {
+                            document.getElementById('visit-count').textContent = data.pageviews.toLocaleString();
+                        } else {
+                            // 使用本地缓存的值
+                            useLocalCounter();
+                        }
+                    })
+                    .catch(error => {
+                        console.log('Counter API error:', error);
+                        useLocalCounter();
+                    });
+            }, 1500); // 给Counter.dev脚本加载的时间
+        });
+
+        // 使用本地计数器作为备用
+        function useLocalCounter() {
+            const startCount = localStorage.getItem('visit-fallback-count') || 1500;
+            document.getElementById('visit-count').textContent = parseInt(startCount).toLocaleString();
+            // 增加本地备用计数
+            localStorage.setItem('visit-fallback-count', parseInt(startCount) + 1);
         }
     </script>
     
