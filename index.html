@@ -815,23 +815,21 @@
             color: var(--light-text);
         }
         
-        .counter-frame {
+        .counter-number {
+            font-weight: 600;
+            color: var(--primary-color);
             background: rgba(0, 132, 255, 0.08);
+            padding: 2px 8px;
             border-radius: 12px;
-            padding: 0;
+            position: relative;
             overflow: hidden;
-            height: 24px;
-            border: none;
-            transition: all 0.3s ease;
-        }
-
-        [data-theme="dark"] .counter-frame {
-            background: rgba(0, 195, 255, 0.1);
+            min-width: 40px;
+            text-align: center;
+            animation: count-up 0.8s ease-out;
         }
         
-        .counter-frame:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 3px 10px rgba(0, 132, 255, 0.15);
+        [data-theme="dark"] .counter-number {
+            background: rgba(0, 195, 255, 0.1);
         }
         
         /* Media Queries */
@@ -1046,20 +1044,38 @@
                 <div class="visitor-counter">
                     <i class="fas fa-chart-line counter-icon"></i>
                     <span class="counter-text">Visits:</span>
-                    <iframe 
-                        class="counter-frame"
-                        src="https://counter.dev/b67d050f-3dc2-46a2-99cc-125193342e4f"
-                        width="80"
-                        height="24"
-                        title="Website counter"
-                        loading="lazy"
-                    ></iframe>
+                    <span class="counter-number" id="visit-count">1</span>
                 </div>
             </div>
         </footer>
     </div>
     
     <script>
+        // 访问量计数器逻辑
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取或创建本地存储的计数
+            let count = localStorage.getItem('visit-count');
+            
+            // 如果不存在或无效，设置初始值
+            if (!count || isNaN(parseInt(count))) {
+                count = 1500; // 起始值
+            } else {
+                count = parseInt(count);
+            }
+            
+            // 检查是否是新会话
+            const isNewSession = !sessionStorage.getItem('session-active');
+            if (isNewSession) {
+                // 新会话计数+1
+                count++;
+                localStorage.setItem('visit-count', count);
+                sessionStorage.setItem('session-active', 'true');
+            }
+            
+            // 显示计数
+            document.getElementById('visit-count').textContent = count.toLocaleString();
+        });
+        
         // Animation types
         const ANIMATIONS = {
             NETWORK: 'network',
@@ -1215,11 +1231,6 @@
                 localStorage.setItem('theme', newTheme);
                 updateThemeIcon(newTheme);
                 
-                // Update counter iframe theme as well
-                const counterFrame = document.querySelector('.counter-frame');
-                const newCounterSrc = counterFrame.src.split('?')[0];
-                counterFrame.src = newCounterSrc + (newTheme === 'dark' ? '?theme=dark' : '?theme=light');
-                
                 if (animationEnabled) {
                     // Update colors for animations
                     updateColors();
@@ -1237,15 +1248,6 @@
                     themeIcon.classList.remove('fa-sun');
                     themeIcon.classList.add('fa-moon');
                 }
-                
-                // Also update counter iframe theme
-                setTimeout(() => {
-                    const counterFrame = document.querySelector('.counter-frame');
-                    if (counterFrame) {
-                        const baseSrc = counterFrame.src.split('?')[0];
-                        counterFrame.src = baseSrc + (theme === 'dark' ? '?theme=dark' : '?theme=light');
-                    }
-                }, 100);
             }
             
             function updateAnimationIcon(enabled) {
@@ -2528,16 +2530,6 @@
                     behavior: 'smooth'
                 });
             });
-        });
-
-        // Add theme auto-switcher for the counter iframe
-        window.addEventListener('load', function() {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const counterFrame = document.querySelector('.counter-frame');
-            if (counterFrame) {
-                const baseSrc = counterFrame.src.split('?')[0];
-                counterFrame.src = baseSrc + (currentTheme === 'dark' ? '?theme=dark' : '?theme=light');
-            }
         });
     </script>
 </body>
