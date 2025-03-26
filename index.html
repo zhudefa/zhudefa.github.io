@@ -815,21 +815,23 @@
             color: var(--light-text);
         }
         
-        .counter-number {
-            font-weight: 600;
-            color: var(--primary-color);
+        .counter-frame {
             background: rgba(0, 132, 255, 0.08);
-            padding: 2px 8px;
             border-radius: 12px;
-            position: relative;
+            padding: 0;
             overflow: hidden;
-            min-width: 40px;
-            text-align: center;
-            animation: count-up 0.8s ease-out;
+            height: 24px;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .counter-frame {
+            background: rgba(0, 195, 255, 0.1);
         }
         
-        [data-theme="dark"] .counter-number {
-            background: rgba(0, 195, 255, 0.1);
+        .counter-frame:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(0, 132, 255, 0.15);
         }
         
         /* Media Queries */
@@ -1044,45 +1046,18 @@
                 <div class="visitor-counter">
                     <i class="fas fa-chart-line counter-icon"></i>
                     <span class="counter-text">Visits:</span>
-                    <span class="counter-number" id="visit-count">--</span>
+                    <iframe 
+                        class="counter-frame"
+                        src="https://counter.dev/b67d050f-3dc2-46a2-99cc-125193342e4f"
+                        width="80"
+                        height="24"
+                        title="Website counter"
+                        loading="lazy"
+                    ></iframe>
                 </div>
             </div>
         </footer>
     </div>
-    
-    <!-- Visitor counter script -->
-    <script>
-        // 获取访问计数并显示
-        window.addEventListener('load', function() {
-            // 延迟执行，确保Counter.dev脚本有时间加载和初始化
-            setTimeout(() => {
-                // 使用Counter.dev API获取统计数据
-                fetch(`https://api.counter.dev/stats/${encodeURIComponent('b67d050f-3dc2-46a2-99cc-125193342e4f')}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        // 更新计数显示
-                        if (data && data.hasOwnProperty('pageviews')) {
-                            document.getElementById('visit-count').textContent = data.pageviews.toLocaleString();
-                        } else {
-                            // 使用本地缓存的值
-                            useLocalCounter();
-                        }
-                    })
-                    .catch(error => {
-                        console.log('Counter API error:', error);
-                        useLocalCounter();
-                    });
-            }, 1500); // 给Counter.dev脚本加载的时间
-        });
-
-        // 使用本地计数器作为备用
-        function useLocalCounter() {
-            const startCount = localStorage.getItem('visit-fallback-count') || 1500;
-            document.getElementById('visit-count').textContent = parseInt(startCount).toLocaleString();
-            // 增加本地备用计数
-            localStorage.setItem('visit-fallback-count', parseInt(startCount) + 1);
-        }
-    </script>
     
     <script>
         // Animation types
@@ -1240,6 +1215,11 @@
                 localStorage.setItem('theme', newTheme);
                 updateThemeIcon(newTheme);
                 
+                // Update counter iframe theme as well
+                const counterFrame = document.querySelector('.counter-frame');
+                const newCounterSrc = counterFrame.src.split('?')[0];
+                counterFrame.src = newCounterSrc + (newTheme === 'dark' ? '?theme=dark' : '?theme=light');
+                
                 if (animationEnabled) {
                     // Update colors for animations
                     updateColors();
@@ -1257,6 +1237,15 @@
                     themeIcon.classList.remove('fa-sun');
                     themeIcon.classList.add('fa-moon');
                 }
+                
+                // Also update counter iframe theme
+                setTimeout(() => {
+                    const counterFrame = document.querySelector('.counter-frame');
+                    if (counterFrame) {
+                        const baseSrc = counterFrame.src.split('?')[0];
+                        counterFrame.src = baseSrc + (theme === 'dark' ? '?theme=dark' : '?theme=light');
+                    }
+                }, 100);
             }
             
             function updateAnimationIcon(enabled) {
@@ -2539,6 +2528,16 @@
                     behavior: 'smooth'
                 });
             });
+        });
+
+        // Add theme auto-switcher for the counter iframe
+        window.addEventListener('load', function() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const counterFrame = document.querySelector('.counter-frame');
+            if (counterFrame) {
+                const baseSrc = counterFrame.src.split('?')[0];
+                counterFrame.src = baseSrc + (currentTheme === 'dark' ? '?theme=dark' : '?theme=light');
+            }
         });
     </script>
 </body>
