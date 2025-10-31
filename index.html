@@ -900,8 +900,8 @@
         
         <!-- Animation toggle button -->
         <div class="animation-toggle" id="animation-toggle">
-            <i class="fas fa-pause"></i>
-            <span class="control-tooltip">Toggle Animation</span>
+            <i class="fas fa-play"></i>
+            <span class="control-tooltip">Enable Animation</span>
         </div>
         
         <!-- Theme toggle button -->
@@ -942,7 +942,7 @@
                     </div>
                     <span class="position">AI Researcher @ ByteDance</span>
                     <p class="bio">
-                        I am a researcher at ByteDance, where my work focuses on Large Language Models (LLMs). My research interests lie in developing more efficient pretraining paradigms and posttraining methods to make AI agents smarter.
+                        I am a researcher at ByteDance, where my work focuses on Large Language Models (LLMs). My research interests lie in developing stronger architecture of LLM.
                         Before joining ByteDance, I completed my master's degree at the Chinese Academy of Sciences in 2020, where I focused on Generative AI research. Prior to that, I earned my bachelor's degree from Northeastern University in 2017.
                     </p>
                     <div class="contact-info">
@@ -985,7 +985,7 @@
                     <div class="publication-card">
                         <div class="publication-title">Expert Race: A Flexible Routing Strategy for Scaling Diffusion Transformer with Mixture of Experts</div>
                         <div class="publication-authors">Yike Yuan, Ziyu Wang, Zihao Huang, Defa Zhu, Xun Zhou, Jingyi Yu, Qiyang Min</div>
-                        <div class="publication-venue">Preprint</div>
+                        <div class="publication-venue">ICML 2025</div>
                         <p class="publication-description">Diffusion models have emerged as mainstream framework in visual generation. Building upon this success, the integration of Mixture of Experts (MoE) methods has shown promise in enhancing model scalability and performance. In this paper, we introduce Race-DiT, a novel MoE model for diffusion transformers with a flexible routing strategy, Expert Race. By allowing tokens and experts to compete together and select the top candidates, the model learns to dynamically assign experts to critical tokens. Additionally, we propose per-layer regularization to address challenges in shallow layer learning, and router similarity loss to prevent mode collapse, ensuring better expert utilization. Extensive experiments on ImageNet validate the effectiveness of our approach, showcasing significant performance gains while promising scaling properties.</p>
                         <div class="publication-links">
                             <a href="https://arxiv.org/pdf/2503.16057" target="_blank">PDF</a>
@@ -994,7 +994,7 @@
                     <div class="publication-card">
                         <div class="publication-title">Frac-Connections: Fractional Extension of Hyper-Connections</div>
                         <div class="publication-authors">Defa Zhu, Hongzhi Huang, Jundong Zhou, Zihao Huang, Yutao Zeng, Banggu Wu, Qiyang Min, Xun Zhou</div>
-                        <div class="publication-venue">Preprint</div>
+                        <div class="publication-venue">Tech Report</div>
                         <p class="publication-description">Residual connections are central to modern deep learning architectures, enabling the training of very deep networks by mitigating gradient vanishing. Hyper-Connections recently generalized residual connections by introducing multiple connection strengths at different depths, thereby addressing the seesaw effect between gradient vanishing and representation collapse. However, Hyper-Connections increase memory access costs by expanding the width of hidden states. In this paper, we propose Frac-Connections, a novel approach that divides hidden states into multiple parts rather than expanding their width. Frac-Connections retain partial benefits of Hyper-Connections while reducing memory consumption. To validate their effectiveness, we conduct large-scale experiments on language tasks, with the largest being a 7B MoE model trained on up to 3T tokens, demonstrating that Frac-Connections significantly outperform residual connections.</p>
                         <div class="publication-links">
                             <a href="https://arxiv.org/pdf/2503.14125" target="_blank">PDF</a>
@@ -1004,7 +1004,7 @@
                     <div class="publication-card">
                         <div class="publication-title">Over-tokenized transformer: Vocabulary is generally worth scaling</div>
                         <div class="publication-authors">Hongzhi Huang, Defa Zhu, Banggu Wu, Yutao Zeng, Ya Wang, Qiyang Min, Xun Zhou</div>
-                        <div class="publication-venue">Preprint</div>
+                        <div class="publication-venue">ICML 2025</div>
                         <p class="publication-description">Tokenization is a fundamental component of large language models (LLMs), yet its influence on model scaling and performance is not fully explored. In this paper, we introduce Over-Tokenized Transformers, a novel framework that decouples input and output vocabularies to improve language modeling performance. Specifically, our approach scales up input vocabularies to leverage multi-gram tokens. Through extensive experiments, we uncover a log-linear relationship between input vocabulary size and training loss, demonstrating that larger input vocabularies consistently enhance model performance, regardless of model size. Using a large input vocabulary, we achieve performance comparable to double-sized baselines with no additional cost. Our findings highlight the importance of tokenization in scaling laws and provide practical insight for tokenizer design, paving the way for more efficient and powerful LLMs.</p>
                         <div class="publication-links">
                             <a href="https://arxiv.org/pdf/2501.16975" target="_blank">PDF</a>
@@ -1056,7 +1056,7 @@
             // 获取或创建本地存储的计数
             let count = localStorage.getItem('visit-count');
             
-            // 如果不存在或无效，设置初始值
+            // 如果不存在或无效,设置初始值
             if (!count || isNaN(parseInt(count))) {
                 count = 1500; // 起始值
             } else {
@@ -1083,8 +1083,8 @@
             SNAKE: 'snake'
         };
         
-        // Global animation variables
-        let animationEnabled = true;
+        // Global animation variables - 默认关闭
+        let animationEnabled = false;
         let currentAnimation = null;
         
         // Network animation variables
@@ -1161,9 +1161,13 @@
                 updateThemeIcon(savedTheme);
             }
             
-            // Check for saved animation preference
+            // Check for saved animation preference - 默认为关闭
             const savedAnimation = localStorage.getItem('animation');
-            if (savedAnimation === 'disabled') {
+            if (savedAnimation === 'enabled') {
+                animationEnabled = true;
+                toggleAnimation(true);
+                updateAnimationIcon(true);
+            } else {
                 animationEnabled = false;
                 toggleAnimation(false);
                 updateAnimationIcon(false);
@@ -1192,8 +1196,10 @@
             // Initialize animations
             initAnimations();
             
-            // Update UI to reflect active animation
-            activateAnimation(currentAnimation);
+            // Only activate animation if enabled
+            if (animationEnabled) {
+                activateAnimation(currentAnimation);
+            }
             
             // Toggle animation on click
             animationToggle.addEventListener('click', function() {
@@ -1292,7 +1298,7 @@
                 }, 2000);
             });
             
-            // Initialize particles
+            // Initialize particles only if enabled
             if (animationEnabled) {
                 regenerateParticles();
                 
@@ -1421,8 +1427,10 @@
             currentAnimation = newAnimation;
             localStorage.setItem('animationType', newAnimation);
             
-            // Start new animation
-            activateAnimation(newAnimation);
+            // Start new animation if enabled
+            if (animationEnabled) {
+                activateAnimation(newAnimation);
+            }
         }
         
         // Activate specific animation
