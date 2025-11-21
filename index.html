@@ -3,2542 +3,773 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Defa Zhu | 朱德发 - Personal Website</title>
+    <title>Defa Zhu (朱德发) | AI Researcher</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Counter.dev official tracking script -->
-    <script src="https://cdn.counter.dev/script.js" data-id="b67d050f-3dc2-46a2-99cc-125193342e4f" data-utcoffset="8"></script>
+    <!-- 引入不蒜子统计 (Busuanzi) -->
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
     <style>
         :root {
-            /* Light theme (default) */
-            --primary-color: #0084ff;
-            --secondary-color: #7000ff;
-            --text-color: #333333;
-            --light-text: #666666;
-            --bg-color: #ffffff;
-            --card-bg: #f8f9fa;
-            --accent-color: #00c9b7;
-            --gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            --shadow-color: rgba(0, 0, 0, 0.08);
-            --shadow-hover: rgba(0, 0, 0, 0.12);
-            --particle-color: rgba(0, 132, 255, 0.15);
-            --tooltip-bg: rgba(0, 0, 0, 0.8);
-            --tooltip-text: #ffffff;
+            /* Academic Theme - Light */
+            --primary-color: #2563eb; /* Academic Blue */
+            --text-main: #111827;     /* Almost Black */
+            --text-secondary: #4b5563; /* Dark Gray */
+            --text-muted: #6b7280;    /* Light Gray */
+            --bg-body: #ffffff;
+            --bg-sidebar: #f9fafb;
+            --border-color: #e5e7eb;
+            --hover-bg: #f3f4f6;
+            --tag-bg: #eff6ff;
+            --tag-text: #1d4ed8;
             
-            /* Flow animation colors */
-            --flow-particle-colors: #4285f4, #34a853, #fbbc05, #ea4335;
-            --flow-bg: rgba(255, 255, 255, 0.97);
-            
-            /* Snake colors */
-            --snake-bg: rgba(248, 249, 250, 0.97);
-            --snake-head: rgba(0, 132, 255, 0.9);
-            --snake-body: rgba(112, 0, 255, 0.7);
-            --snake-food: rgba(0, 201, 183, 0.8);
-            
-            /* Network colors */
-            --network-node: rgba(0, 132, 255, 0.8);
-            --network-connection: rgba(112, 0, 255, 0.5);
+            /* Animation colors */
+            --snake-head: rgba(37, 99, 235, 0.9);
+            --snake-body: rgba(96, 165, 250, 0.7);
+            --snake-food: rgba(16, 185, 129, 0.8);
         }
         
         [data-theme="dark"] {
-            /* Dark theme */
-            --primary-color: #00c3ff;
-            --secondary-color: #7000ff;
-            --text-color: #e0e0e0;
-            --light-text: #b0b0b0;
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
-            --accent-color: #00ffd0;
-            --shadow-color: rgba(0, 0, 0, 0.2);
-            --shadow-hover: rgba(0, 0, 0, 0.3);
-            --particle-color: rgba(255, 255, 255, 0.2);
-            --tooltip-bg: rgba(255, 255, 255, 0.9);
-            --tooltip-text: #121212;
-            
-            /* Flow animation colors for dark theme */
-            --flow-particle-colors: #00c3ff, #9b59ff, #00ffd0, #c061cb;
-            --flow-bg: rgba(18, 18, 18, 0.97);
-            
-            /* Snake colors for dark theme */
-            --snake-bg: rgba(18, 18, 18, 0.97);
-            --snake-head: rgba(0, 195, 255, 0.9);
-            --snake-body: rgba(155, 89, 255, 0.7);
-            --snake-food: rgba(0, 255, 208, 0.8);
-            
-            /* Network colors for dark theme */
-            --network-node: rgba(0, 195, 255, 0.8);
-            --network-connection: rgba(155, 89, 255, 0.5);
+            /* Academic Theme - Dark */
+            --primary-color: #60a5fa;
+            --text-main: #f9fafb;
+            --text-secondary: #d1d5db;
+            --text-muted: #9ca3af;
+            --bg-body: #0f172a; 
+            --bg-sidebar: #1e293b;
+            --border-color: #334155;
+            --hover-bg: #334155;
+            --tag-bg: #1e3a8a;
+            --tag-text: #bfdbfe;
         }
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        @keyframes gradient-animation {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
-        }
-        
-        @keyframes float {
-            0% {
-                transform: translateY(0px);
-            }
-            50% {
-                transform: translateY(-10px);
-            }
-            100% {
-                transform: translateY(0px);
-            }
-        }
-        
-        @keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(0, 132, 255, 0.4);
-            }
-            70% {
-                box-shadow: 0 0 0 10px rgba(0, 132, 255, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(0, 132, 255, 0);
-            }
-        }
-        
-        @keyframes fadeOut {
-            0% {
-                opacity: 1;
-            }
-            100% {
-                opacity: 0;
-            }
-        }
-        
-        @keyframes tooltipFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes foodPulse {
-            0% { transform: scale(0.9); opacity: 0.7; }
-            50% { transform: scale(1.1); opacity: 1; }
-            100% { transform: scale(0.9); opacity: 0.7; }
-        }
-        
-        @keyframes snakePop {
-            0% { transform: scale(1.3); opacity: 0.8; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        
-        @keyframes snakeDeath {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.5); opacity: 0.7; }
-            100% { transform: scale(0); opacity: 0; }
-        }
-        
-        @keyframes count-up {
-            0% { opacity: 0; transform: translateY(10px); }
-            100% { opacity: 1; transform: translateY(0); }
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             line-height: 1.6;
-            color: var(--text-color);
-            background-color: var(--bg-color);
-            position: relative;
+            color: var(--text-main);
+            background-color: var(--bg-body);
             overflow-x: hidden;
-            cursor: default;
+        }
+
+        /* Layout Structure */
+        .layout-wrapper {
+            display: flex;
+            min-height: 100vh;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: 300px;
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            padding: 40px 30px;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+            z-index: 10;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 60px 80px; /* Increased padding for cleaner look */
+            max-width: 900px;
+        }
+
+        /* Profile Section */
+        .profile-img {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%; /* Circle looks classic */
+            object-fit: cover;
+            margin-bottom: 25px;
+            border: 1px solid var(--border-color);
+        }
+
+        .name-block h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-main);
+            line-height: 1.2;
+            margin-bottom: 4px;
+        }
+
+        .name-block h2 {
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+
+        .position-badge {
+            display: inline-block;
+            background: var(--tag-bg);
+            color: var(--tag-text);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 25px;
+        }
+
+        .contact-list {
+            list-style: none;
+            font-size: 0.9rem;
+        }
+
+        .contact-list li {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-secondary);
+        }
+
+        .contact-list a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .contact-list a:hover {
+            color: var(--primary-color);
+        }
+
+        .contact-list i {
+            width: 16px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        /* Main Content Styling */
+        section {
+            margin-bottom: 70px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+            letter-spacing: -0.02em;
+        }
+
+        .bio-text {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            line-height: 1.7;
+            text-align: justify;
+        }
+
+        /* Publication List - Clean Layout */
+        .pub-item {
+            margin-bottom: 40px; /* Space between papers */
+            display: block;
+        }
+
+        .pub-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 8px;
+            line-height: 1.4;
+            display: block;
+            text-decoration: none;
         }
         
-        [data-theme="light"] body {
-            background-image: 
-                radial-gradient(circle at 25% 25%, rgba(0, 132, 255, 0.05) 0%, transparent 50%),
-                radial-gradient(circle at 75% 75%, rgba(112, 0, 255, 0.05) 0%, transparent 50%);
+        /* Optional: Hover effect on title if you want it to look like a link */
+        .pub-title:hover {
+            color: var(--primary-color);
+        }
+
+        .pub-authors {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            line-height: 1.5;
+        }
+
+        /* Highlight user's name */
+        .pub-authors strong {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .pub-venue {
+            font-size: 0.9rem;
+            color: var(--primary-color);
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .pub-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 3; /* Limit to 3 lines */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .pub-links {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s;
+            background: transparent;
+        }
+
+        .btn-link:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            background: var(--hover-bg);
         }
         
-        [data-theme="dark"] body {
-            background-image: 
-                radial-gradient(circle at 25% 25%, rgba(0, 195, 255, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 75% 75%, rgba(112, 0, 255, 0.1) 0%, transparent 50%);
+        .btn-link i {
+            font-size: 0.9em;
         }
-        
-        /* Animation containers */
+
+        /* Footer & Controls */
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .control-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: color 0.2s;
+            padding: 5px;
+        }
+
+        .control-btn:hover, .control-btn.active {
+            color: var(--primary-color);
+        }
+
+        .visit-count {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 10px;
+            font-size: 0.75rem;
+        }
+
+        /* Animation Containers (Hidden by default) */
         .animation-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -2;
+            z-index: -1;
             pointer-events: none;
-            opacity: 1;
+            opacity: 0;
             transition: opacity 0.5s ease;
-            display: none;
         }
         
         .animation-container.active {
-            display: block;
-        }
-        
-        .animation-container.disabled {
-            opacity: 0;
-        }
-        
-        /* Canvas for animations */
-        .animation-container canvas {
-            display: block;
-        }
-        
-        /* Snake animation styles */
-        #snake-container {
-            background-color: var(--snake-bg);
-            overflow: hidden;
-        }
-        
-        .snake-segment {
-            position: absolute;
-            border-radius: 4px;
-            transition: all 0.2s ease;
-        }
-        
-        .snake-head {
-            background-color: var(--snake-head);
-            box-shadow: 0 0 10px var(--snake-head);
-            z-index: 2;
-            border-radius: 6px;
-        }
-        
-        .snake-body {
-            background-color: var(--snake-body);
-            box-shadow: 0 0 5px var(--snake-body);
-            z-index: 1;
-        }
-        
-        .snake-food {
-            position: absolute;
-            background-color: var(--snake-food);
-            border-radius: 50%;
-            box-shadow: 0 0 10px var(--snake-food);
-            animation: foodPulse 2s infinite ease-in-out;
-            z-index: 1;
+            opacity: 0.6;
         }
 
-        /* Flow animation styles */
-        #flow-container {
-            background-color: var(--flow-bg);
-            overflow: hidden;
-        }
-        
-        /* Particles background */
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            overflow: hidden;
-            pointer-events: none;
-            opacity: 1;
-            transition: opacity 0.5s ease;
-        }
-        
-        .particles.disabled {
-            opacity: 0;
-        }
-        
-        .particle {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background-color: var(--particle-color);
-            border-radius: 50%;
-        }
-        
-        /* Cursor follower particles */
-        .cursor-particle {
-            pointer-events: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            border-radius: 50%;
-            z-index: 9999;
-            transform: translate(-50%, -50%);
-            animation: fadeOut 1s forwards;
-        }
-        
-        /* Make sections semi-transparent with blur effect */
-        section {
-            backdrop-filter: blur(5px);
-            background-color: rgba(248, 249, 250, 0.8);
-        }
-        
-        [data-theme="dark"] section {
-            background-color: rgba(30, 30, 30, 0.8);
-        }
-        
-        .publication-card {
-            backdrop-filter: blur(5px);
-            background-color: rgba(255, 255, 255, 0.7);
-        }
-        
-        [data-theme="dark"] .publication-card {
-            background-color: rgba(0, 0, 0, 0.3);
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        /* Controls bar */
-        .controls-bar {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            display: flex;
-            gap: 10px;
-            z-index: 1000;
-        }
-        
-        /* Control buttons */
-        .theme-toggle, .animation-toggle, .animation-switch {
-            width: 45px;
-            height: 45px;
-            background-color: var(--card-bg);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            box-shadow: 0 3px 10px var(--shadow-color);
-            transition: all 0.3s ease;
-        }
-        
-        .theme-toggle:hover, .animation-toggle:hover, .animation-switch:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px var(--shadow-hover);
-        }
-        
-        .theme-toggle i, .animation-toggle i, .animation-switch i {
-            font-size: 1.3rem;
-            color: var(--primary-color);
-            transition: all 0.3s ease;
-        }
-        
-        /* Controls tooltips */
-        .control-tooltip {
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            margin-top: 8px;
-            padding: 5px 10px;
-            background-color: var(--tooltip-bg);
-            color: var(--tooltip-text);
-            border-radius: 4px;
-            font-size: 12px;
-            white-space: nowrap;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-        
-        .theme-toggle:hover .control-tooltip,
-        .animation-toggle:hover .control-tooltip,
-        .animation-switch:hover .control-tooltip {
-            opacity: 1;
-        }
-        
-        header {
-            padding: 60px 0 40px;
-            position: relative;
-        }
-        
-        .header-content {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            position: relative;
-            z-index: 1;
-        }
-        
-        @media (min-width: 768px) {
-            .header-content {
-                flex-direction: row;
-                align-items: flex-start;
-                gap: 60px;
-            }
-        }
-        
-        .profile-image-container {
-            position: relative;
-            width: 220px;
-            height: 220px;
-            margin-bottom: 30px;
-        }
-        
-        @media (min-width: 768px) {
-            .profile-image-container {
-                margin-bottom: 0;
-            }
-        }
-        
-        .profile-image {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            object-fit: cover;
-            position: relative;
-            z-index: 1;
-            border: 3px solid transparent;
-            background: var(--gradient);
-            background-clip: padding-box;
-            animation: float 6s ease-in-out infinite;
-            box-shadow: 0 10px 30px rgba(0, 132, 255, 0.15);
-        }
-        
-        .profile-image::before {
-            content: '';
-            position: absolute;
-            top: -5px;
-            left: -5px;
-            right: -5px;
-            bottom: -5px;
-            background: var(--gradient);
-            border-radius: 50%;
-            z-index: -1;
-            animation: pulse 2s infinite;
-        }
-        
-        .profile-glow {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: var(--gradient);
-            filter: blur(20px);
-            opacity: 0.3;
-            z-index: 0;
-            top: 0;
-            left: 0;
-        }
-        
-        .profile-info {
-            flex: 1;
-            max-width: 600px;
-            text-align: left;
-        }
-        
-        .name-bilingual {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 15px;
-        }
-        
-        .name-english {
-            font-size: 3rem;
-            font-weight: 800;
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 5px;
-            position: relative;
-        }
-        
-        .name-chinese {
-            font-size: 2rem;
-            color: var(--light-text);
-            margin-bottom: 15px;
-        }
-        
-        .position {
-            display: inline-block;
-            color: var(--accent-color);
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-            padding: 5px 15px;
-            border-radius: 20px;
-            background: rgba(0, 201, 183, 0.1);
-            border: 1px solid rgba(0, 201, 183, 0.3);
-            font-weight: 600;
-        }
-        
-        .bio {
-            margin-bottom: 25px;
-            font-size: 1.05rem;
-            line-height: 1.7;
-            color: var(--light-text);
-            text-align: left;
-        }
-        
-        .contact-info {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .contact-info a {
-            color: var(--text-color);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 15px;
-            border-radius: 20px;
-            background: rgba(0, 132, 255, 0.08);
-            border: 1px solid rgba(0, 132, 255, 0.2);
-            transition: all 0.3s ease;
-            font-weight: 500;
-            position: relative;
-        }
-        
-        .contact-info a:hover {
-            background: rgba(0, 132, 255, 0.12);
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 132, 255, 0.15);
-        }
-        
-        .contact-info i {
-            color: var(--primary-color);
-        }
-        
-        /* Email tooltip */
-        .email-container {
-            position: relative;
-            display: inline-block;
-        }
-        
-        .email-tooltip {
-            visibility: hidden;
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            margin-bottom: 10px;
-            padding: 10px 15px;
-            background-color: var(--tooltip-bg);
-            color: var(--tooltip-text);
-            border-radius: 6px;
-            white-space: nowrap;
-            font-size: 14px;
-            opacity: 0;
-            z-index: 100;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            pointer-events: none;
-            transition: opacity 0.3s, visibility 0.3s;
-        }
-        
-        .email-tooltip::after {
-            content: "";
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            margin-left: -5px;
-            border-width: 5px;
-            border-style: solid;
-            border-color: var(--tooltip-bg) transparent transparent transparent;
-        }
-        
-        .email-container:hover .email-tooltip {
-            visibility: visible;
-            opacity: 1;
-            animation: tooltipFadeIn 0.3s ease;
-            pointer-events: auto;
-        }
-        
-        .copy-btn {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 3px 8px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: bold;
-            transition: all 0.2s ease;
-        }
-        
-        .copy-btn:hover {
-            background-color: var(--secondary-color);
-            transform: scale(1.05);
-        }
-        
-        .copied-feedback {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background-color: var(--accent-color);
-            color: white;
-            font-size: 11px;
-            padding: 3px 8px;
-            border-radius: 10px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            font-weight: bold;
-        }
-        
-        .navigation {
-            display: flex;
-            justify-content: center;
-            margin: 40px 0 20px;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-        
-        .navigation a {
-            color: var(--text-color);
-            text-decoration: none;
-            font-weight: 600;
-            padding: 10px 20px;
-            border-radius: 25px;
-            background: rgba(0, 132, 255, 0.08);
-            border: 1px solid rgba(0, 132, 255, 0.2);
-            transition: all 0.3s ease;
-        }
-        
-        .navigation a:hover {
-            background: var(--gradient);
-            color: white;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 132, 255, 0.2);
-        }
-        
-        section {
-            margin-bottom: 80px;
-            padding: 30px;
-            border-radius: 20px;
-            background: var(--card-bg);
-            box-shadow: 0 10px 30px var(--shadow-color);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: var(--gradient);
-            background-size: 200% 200%;
-            animation: gradient-animation 3s ease infinite;
-        }
-        
-        h2 {
-            color: var(--text-color);
-            margin-bottom: 30px;
-            font-size: 2rem;
-            padding-bottom: 10px;
-            position: relative;
-            display: inline-block;
-        }
-        
-        h2::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: var(--gradient);
-        }
-        
-        .publications-list {
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-            margin-top: 20px;
-            max-width: 900px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .publication-card {
-            border-radius: 15px;
-            padding: 25px;
-            background: rgba(255, 255, 255, 0.7);
-            border: 1px solid rgba(0, 132, 255, 0.15);
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 5px 15px var(--shadow-color);
-        }
-        
-        [data-theme="dark"] .publication-card {
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .publication-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px var(--shadow-hover);
-            border-color: rgba(0, 132, 255, 0.3);
-        }
-        
-        [data-theme="dark"] .publication-card:hover {
-            border-color: rgba(255, 255, 255, 0.2);
-        }
-        
-        .publication-title {
-            font-weight: bold;
-            color: var(--text-color);
-            margin-bottom: 12px;
-            font-size: 1.2rem;
-        }
-        
-        .publication-authors {
-            font-style: italic;
-            margin-bottom: 12px;
-            color: var(--light-text);
-        }
-        
-        .publication-venue {
-            margin-bottom: 12px;
-            color: var(--primary-color);
-            font-weight: 500;
-        }
-        
-        .publication-description {
-            margin-bottom: 15px;
-            color: var(--light-text);
-            flex-grow: 1;
-        }
-        
-        .publication-links {
-            display: flex;
-            gap: 10px;
-            margin-top: auto;
-        }
-        
-        .publication-links a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-size: 0.9rem;
-            padding: 5px 12px;
-            border-radius: 15px;
-            background: rgba(0, 132, 255, 0.08);
-            border: 1px solid rgba(0, 132, 255, 0.2);
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-        
-        [data-theme="dark"] .publication-links a {
-            background: rgba(0, 195, 255, 0.1);
-            border: 1px solid rgba(0, 195, 255, 0.3);
-            color: white;
-        }
-        
-        .publication-links a:hover {
-            background: rgba(0, 132, 255, 0.12);
-            transform: translateY(-2px);
-            box-shadow: 0 3px 10px rgba(0, 132, 255, 0.15);
-        }
-        
-        [data-theme="dark"] .publication-links a:hover {
-            background: rgba(0, 195, 255, 0.2);
-        }
-        
-        footer {
-            text-align: center;
-            padding: 50px 0;
-            color: var(--light-text);
-            font-size: 0.9rem;
-            position: relative;
-        }
-        
-        .footer-content {
-            position: relative;
-            z-index: 1;
-        }
-        
-        .footer-glow {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 300px;
-            height: 150px;
-            background: var(--gradient);
-            filter: blur(100px);
-            opacity: 0.07;
-            z-index: 0;
-        }
-        
-        [data-theme="dark"] .footer-glow {
-            opacity: 0.15;
-        }
-        
-        /* Visitor counter styles */
-        .visitor-counter {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 25px;
-            gap: 7px;
-            opacity: 0.8;
-            transition: opacity 0.3s ease;
-        }
-        
-        .visitor-counter:hover {
-            opacity: 1;
-        }
-        
-        .counter-icon {
-            color: var(--primary-color);
-            font-size: 1rem;
-        }
-        
-        .counter-text {
-            font-size: 0.9rem;
-            color: var(--light-text);
-        }
-        
-        .counter-number {
-            font-weight: 600;
-            color: var(--primary-color);
-            background: rgba(0, 132, 255, 0.08);
-            padding: 2px 8px;
-            border-radius: 12px;
-            position: relative;
-            overflow: hidden;
-            min-width: 40px;
-            text-align: center;
-            animation: count-up 0.8s ease-out;
-        }
-        
-        [data-theme="dark"] .counter-number {
-            background: rgba(0, 195, 255, 0.1);
-        }
-        
-        /* Media Queries */
-        @media (max-width: 768px) {
-            .header-content {
+        /* Snake Specifics */
+        #snake-container { background: transparent; }
+        .snake-segment { position: absolute; border-radius: 2px; }
+        .snake-head { background-color: var(--snake-head); z-index: 2; }
+        .snake-body { background-color: var(--snake-body); z-index: 1; }
+        .snake-food { position: absolute; background-color: var(--snake-food); border-radius: 50%; z-index: 1; }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 900px) {
+            .layout-wrapper {
                 flex-direction: column;
-                align-items: center;
-                text-align: center;
             }
-            
-            .profile-info, .bio {
-                text-align: center;
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                padding: 40px 20px;
             }
-            
-            .name-english {
-                font-size: 2.5rem;
+            .main-content {
+                padding: 40px 20px;
             }
-            
-            .name-chinese {
-                font-size: 1.7rem;
-            }
-            
-            .navigation {
-                flex-direction: column;
+            .sidebar-footer {
+                display: flex;
+                justify-content: space-between;
                 align-items: center;
             }
-            
-            .navigation a {
-                width: 80%;
-                text-align: center;
-            }
-            
-            .email-tooltip {
-                left: 0;
-                transform: translateX(0);
-            }
-            
-            .email-tooltip::after {
-                left: 20px;
-                margin-left: 0;
-            }
         }
         
-        /* Scroll bar styling */
-        ::-webkit-scrollbar {
-            width: 10px;
-            background: var(--bg-color);
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: var(--gradient);
-            border-radius: 10px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-color);
+        /* Email Tooltip */
+        .email-wrapper { position: relative; display: inline-block; }
+        .copy-feedback {
+            position: absolute;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--text-main);
+            color: var(--bg-body);
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 8px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            white-space: nowrap;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
     </style>
 </head>
 <body>
-    <!-- Controls bar -->
-    <div class="controls-bar">
-        <!-- Animation switch button -->
-        <div class="animation-switch" id="animation-switch">
-            <i class="fas fa-random"></i>
-            <span class="control-tooltip">Switch Animation</span>
-        </div>
-        
-        <!-- Animation toggle button -->
-        <div class="animation-toggle" id="animation-toggle">
-            <i class="fas fa-play"></i>
-            <span class="control-tooltip">Enable Animation</span>
-        </div>
-        
-        <!-- Theme toggle button -->
-        <div class="theme-toggle" id="theme-toggle">
-            <i class="fas fa-moon"></i>
-            <span class="control-tooltip">Toggle Theme</span>
-        </div>
-    </div>
-    
-    <!-- Animation containers -->
-    <div id="network-container" class="animation-container">
-        <canvas id="nodes-canvas"></canvas>
-    </div>
-    
-    <div id="flow-container" class="animation-container">
-        <canvas id="flow-canvas"></canvas>
-    </div>
-    
-    <div id="snake-container" class="animation-container">
-        <!-- No grid, just the container for snake elements -->
-    </div>
-    
-    <!-- Particles background -->
-    <div class="particles" id="particles"></div>
-    
-    <div class="container">
-        <header>
-            <div class="header-content">
-                <div class="profile-image-container">
-                    <div class="profile-glow"></div>
-                    <img src="images/profile.jpeg" alt="Defa Zhu" class="profile-image">
+
+    <!-- Animation Layers (Hidden by default) -->
+    <div id="network-container" class="animation-container"><canvas id="nodes-canvas"></canvas></div>
+    <div id="flow-container" class="animation-container"><canvas id="flow-canvas"></canvas></div>
+    <div id="snake-container" class="animation-container"></div>
+
+    <div class="layout-wrapper">
+        <!-- Sidebar: Profile & Info -->
+        <aside class="sidebar">
+            <div class="profile-section">
+                <img src="images/profile.jpeg" alt="Defa Zhu" class="profile-img">
+                <div class="name-block">
+                    <h1>Defa Zhu</h1>
+                    <h2>朱德发</h2>
+                </div>
+                <div class="position-badge">AI Researcher @ ByteDance</div>
+                
+                <ul class="contact-list">
+                    <li>
+                        <i class="fas fa-envelope"></i>
+                        <div class="email-wrapper">
+                            <a href="mailto:zhudefa_ai@163.com" id="email-link">zhudefa_ai@163.com</a>
+                            <span class="copy-feedback" id="copy-msg">Copied!</span>
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-graduation-cap"></i>
+                        <a href="https://scholar.google.com/citations?user=v4ySl6MAAAAJ&hl=zh-CN" target="_blank">Google Scholar</a>
+                    </li>
+                    <li>
+                        <i class="fab fa-zhihu"></i>
+                        <a href="https://www.zhihu.com/people/mathfinder" target="_blank">Zhihu</a>
+                    </li>
+                    <li>
+                        <i class="fab fa-twitter"></i>
+                        <a href="https://x.com/zhudefa" target="_blank">Twitter / X</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="sidebar-footer">
+                <div>
+                    <p>&copy; 2025 Defa Zhu</p>
+                    <!-- Busuanzi Counter -->
+                    <div class="visit-count">
+                        <i class="fas fa-eye"></i>
+                        <span id="busuanzi_container_site_pv" style="display:none;">
+                            <span id="busuanzi_value_site_pv">--</span> views
+                        </span>
+                    </div>
                 </div>
                 
-                <div class="profile-info">
-                    <div class="name-bilingual">
-                        <span class="name-english">Defa Zhu</span>
-                        <span class="name-chinese">朱德发</span>
-                    </div>
-                    <span class="position">AI Researcher @ ByteDance</span>
-                    <p class="bio">
-                        I am a researcher at ByteDance, where my work focuses on Large Language Models (LLMs). My research interests lie in developing stronger architecture of LLM.
-                        Before joining ByteDance, I completed my master's degree at the Chinese Academy of Sciences in 2020, where I focused on Generative AI research. Prior to that, I earned my bachelor's degree from Northeastern University in 2017.
-                    </p>
-                    <div class="contact-info">
-                        <div class="email-container">
-                            <a href="mailto:zhudefa_ai@163.com">
-                                <i class="fas fa-envelope"></i>
-                                Email
-                                <span class="copied-feedback" id="copied-feedback">Copied!</span>
-                            </a>
-                            <div class="email-tooltip">
-                                <span id="email-text">zhudefa_ai@163.com</span>
-                                <button class="copy-btn" id="copy-email-btn">Copy</button>
-                            </div>
-                        </div>
-                        <a href="https://scholar.google.com/citations?user=v4ySl6MAAAAJ&hl=zh-CN" target="_blank">
-                            <i class="fas fa-graduation-cap"></i>
-                            Google Scholar
-                        </a>
-                        <a href="https://www.zhihu.com/people/mathfinder" target="_blank">
-                            <i class="fab fa-zhihu"></i>
-                            Zhihu
-                        </a>
-                        <a href="https://x.com/zhudefa" target="_blank">
-                            <i class="fab fa-twitter"></i>
-                            x.com
-                        </a>
-                    </div>
+                <!-- Minimal Controls -->
+                <div class="controls">
+                    <button class="control-btn" id="theme-toggle" title="Toggle Theme">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button class="control-btn" id="animation-toggle" title="Toggle Animation">
+                        <i class="fas fa-magic"></i>
+                    </button>
                 </div>
             </div>
-            
-            <nav class="navigation">
-                <a href="#publications">Publications</a>
-            </nav>
-        </header>
-        
-        <main>
-            <section id="publications">
-                <h2>Selected Publications</h2>
-                <div class="publications-list">
-                    <div class="publication-card">
-                        <div class="publication-title">Expert Race: A Flexible Routing Strategy for Scaling Diffusion Transformer with Mixture of Experts</div>
-                        <div class="publication-authors">Yike Yuan, Ziyu Wang, Zihao Huang, Defa Zhu, Xun Zhou, Jingyi Yu, Qiyang Min</div>
-                        <div class="publication-venue">ICML 2025</div>
-                        <p class="publication-description">Diffusion models have emerged as mainstream framework in visual generation. Building upon this success, the integration of Mixture of Experts (MoE) methods has shown promise in enhancing model scalability and performance. In this paper, we introduce Race-DiT, a novel MoE model for diffusion transformers with a flexible routing strategy, Expert Race. By allowing tokens and experts to compete together and select the top candidates, the model learns to dynamically assign experts to critical tokens. Additionally, we propose per-layer regularization to address challenges in shallow layer learning, and router similarity loss to prevent mode collapse, ensuring better expert utilization. Extensive experiments on ImageNet validate the effectiveness of our approach, showcasing significant performance gains while promising scaling properties.</p>
-                        <div class="publication-links">
-                            <a href="https://arxiv.org/pdf/2503.16057" target="_blank">PDF</a>
-                        </div>
-                    </div>
-                    <div class="publication-card">
-                        <div class="publication-title">Frac-Connections: Fractional Extension of Hyper-Connections</div>
-                        <div class="publication-authors">Defa Zhu, Hongzhi Huang, Jundong Zhou, Zihao Huang, Yutao Zeng, Banggu Wu, Qiyang Min, Xun Zhou</div>
-                        <div class="publication-venue">Tech Report</div>
-                        <p class="publication-description">Residual connections are central to modern deep learning architectures, enabling the training of very deep networks by mitigating gradient vanishing. Hyper-Connections recently generalized residual connections by introducing multiple connection strengths at different depths, thereby addressing the seesaw effect between gradient vanishing and representation collapse. However, Hyper-Connections increase memory access costs by expanding the width of hidden states. In this paper, we propose Frac-Connections, a novel approach that divides hidden states into multiple parts rather than expanding their width. Frac-Connections retain partial benefits of Hyper-Connections while reducing memory consumption. To validate their effectiveness, we conduct large-scale experiments on language tasks, with the largest being a 7B MoE model trained on up to 3T tokens, demonstrating that Frac-Connections significantly outperform residual connections.</p>
-                        <div class="publication-links">
-                            <a href="https://arxiv.org/pdf/2503.14125" target="_blank">PDF</a>
-                        </div>
-                    </div>
+        </aside>
 
-                    <div class="publication-card">
-                        <div class="publication-title">Over-tokenized transformer: Vocabulary is generally worth scaling</div>
-                        <div class="publication-authors">Hongzhi Huang, Defa Zhu, Banggu Wu, Yutao Zeng, Ya Wang, Qiyang Min, Xun Zhou</div>
-                        <div class="publication-venue">ICML 2025</div>
-                        <p class="publication-description">Tokenization is a fundamental component of large language models (LLMs), yet its influence on model scaling and performance is not fully explored. In this paper, we introduce Over-Tokenized Transformers, a novel framework that decouples input and output vocabularies to improve language modeling performance. Specifically, our approach scales up input vocabularies to leverage multi-gram tokens. Through extensive experiments, we uncover a log-linear relationship between input vocabulary size and training loss, demonstrating that larger input vocabularies consistently enhance model performance, regardless of model size. Using a large input vocabulary, we achieve performance comparable to double-sized baselines with no additional cost. Our findings highlight the importance of tokenization in scaling laws and provide practical insight for tokenizer design, paving the way for more efficient and powerful LLMs.</p>
-                        <div class="publication-links">
-                            <a href="https://arxiv.org/pdf/2501.16975" target="_blank">PDF</a>
-                        </div>
-                    </div>
-                    
-                    <div class="publication-card">
-                        <div class="publication-title">Ultra-Sparse Memory Network</div>
-                        <div class="publication-authors">Zihao Huang, Qiyang Min, Hongzhi Huang, Defa Zhu, Yutao Zeng, Ran Guo, Xun Zhou</div>
-                        <div class="publication-venue">ICLR, 2025</div>
-                        <p class="publication-description">It is widely acknowledged that the performance of Transformer models is exponentially related to their number of parameters and computational complexity. While approaches like Mixture of Experts (MoE) decouple parameter count from computational complexity, they still face challenges in inference due to high memory access costs. This work introduces UltraMem, incorporating large-scale, ultra-sparse memory layer to address these limitations. Our approach significantly reduces inference latency while maintaining model performance. We also investigate the scaling laws of this new architecture, demonstrating that it not only exhibits favorable scaling properties but outperforms traditional models. In our experiments, we train networks with up to 20 million memory slots. The results show that our method achieves state-of-the-art inference speed and model performance within a given computational budget.</p>
-                        <div class="publication-links">
-                            <a href="https://arxiv.org/pdf/2411.12364" target="_blank">PDF</a>
-                        </div>
-                    </div>
-
-                    <div class="publication-card">
-                        <div class="publication-title">Hyper-Connections</div>
-                        <div class="publication-authors">Defa Zhu, Hongzhi Huang, Zihao Huang, Yutao Zeng, Yunyao Mao, Banggu Wu, Qiyang Min, Xun Zhou</div>
-                        <div class="publication-venue">ICLR, 2025</div>
-                        <p class="publication-description">We present hyper-connections, a simple yet effective method that can serve as an alternative to residual connections. This approach specifically addresses common drawbacks observed in residual connection variants, such as the seesaw effect between gradient vanishing and representation collapse. Theoretically, hyper-connections allow the network to adjust the strength of connections between features at different depths and dynamically rearrange layers. We conduct experiments focusing on the pre-training of large language models, including dense and sparse models, where hyper-connections show significant performance improvements over residual connections. Additional experiments conducted on vision tasks also demonstrate similar improvements. We anticipate that this method will be broadly applicable and beneficial across a wide range of AI problems.</p>
-                        <div class="publication-links">
-                            <a href="https://arxiv.org/pdf/2409.19606" target="_blank">PDF</a>
-                        </div>
-                    </div>
+        <!-- Main Content: Bio & Publications -->
+        <main class="main-content">
+            <!-- About Section -->
+            <section id="about">
+                <h2 class="section-title">About Me</h2>
+                <div class="bio-text">
+                    <p>I am a researcher at ByteDance, where my work focuses on Large Language Models (LLMs). My research interests lie in developing stronger architectures for LLMs. Before joining ByteDance, I completed my master's degree at the Chinese Academy of Sciences in 2020, focusing on generative AI research. Prior to that, I earned my bachelor's degree from Northeastern University in 2017.</p>
                 </div>
             </section>
-        </main>
-        
-        <footer>
-            <div class="footer-glow"></div>
-            <div class="footer-content">
-                <p>&copy; 2025 Defa Zhu | 朱德发. All Rights Reserved.</p>
-                <p style="margin-top: 10px;">Last Updated: March 2025</p>
+
+            <!-- Publications Section -->
+            <section id="publications">
+                <h2 class="section-title">Selected Publications</h2>
                 
-                <!-- Visitor counter -->
-                <div class="visitor-counter">
-                    <i class="fas fa-chart-line counter-icon"></i>
-                    <span class="counter-text">Visits:</span>
-                    <span class="counter-number" id="visit-count">1</span>
+                <!-- Paper 1 -->
+                <div class="pub-item">
+                    <a href="https://arxiv.org/pdf/2503.16057" target="_blank" class="pub-title">Expert Race: A Flexible Routing Strategy for Scaling Diffusion Transformer with Mixture of Experts</a>
+                    <div class="pub-authors">Yike Yuan, Ziyu Wang, Zihao Huang, <strong>Defa Zhu</strong>, Xun Zhou, Jingyi Yu, Qiyang Min</div>
+                    <div class="pub-venue">ICML 2025</div>
+                    <p class="pub-desc">Diffusion models have emerged as mainstream framework in visual generation. Building upon this success, the integration of Mixture of Experts (MoE) methods has shown promise in enhancing model scalability and performance. In this paper, we introduce Race-DiT, a novel MoE model for diffusion transformers with a flexible routing strategy, Expert Race.</p>
+                    <div class="pub-links">
+                        <a href="https://arxiv.org/pdf/2503.16057" target="_blank" class="btn-link"><i class="far fa-file-pdf"></i> PDF</a>
+                    </div>
                 </div>
-            </div>
-        </footer>
+
+                <!-- Paper 2 -->
+                <div class="pub-item">
+                    <a href="https://arxiv.org/pdf/2503.14125" target="_blank" class="pub-title">Frac-Connections: Fractional Extension of Hyper-Connections</a>
+                    <div class="pub-authors"><strong>Defa Zhu</strong>, Hongzhi Huang, Jundong Zhou, Zihao Huang, Yutao Zeng, Banggu Wu, Qiyang Min, Xun Zhou</div>
+                    <div class="pub-venue">Tech Report</div>
+                    <p class="pub-desc">Residual connections are central to modern deep learning architectures. Hyper-Connections recently generalized residual connections by introducing multiple connection strengths. In this paper, we propose Frac-Connections, a novel approach that divides hidden states into multiple parts rather than expanding their width.</p>
+                    <div class="pub-links">
+                        <a href="https://arxiv.org/pdf/2503.14125" target="_blank" class="btn-link"><i class="far fa-file-pdf"></i> PDF</a>
+                    </div>
+                </div>
+
+                <!-- Paper 3 -->
+                <div class="pub-item">
+                    <a href="https://arxiv.org/pdf/2501.16975" target="_blank" class="pub-title">Over-tokenized transformer: Vocabulary is generally worth scaling</a>
+                    <div class="pub-authors">Hongzhi Huang, <strong>Defa Zhu</strong>, Banggu Wu, Yutao Zeng, Ya Wang, Qiyang Min, Xun Zhou</div>
+                    <div class="pub-venue">ICML 2025</div>
+                    <p class="pub-desc">Tokenization is a fundamental component of large language models (LLMs), yet its influence on model scaling and performance is not fully explored. In this paper, we introduce Over-Tokenized Transformers, a novel framework that decouples input and output vocabularies to improve language modeling performance.</p>
+                    <div class="pub-links">
+                        <a href="https://arxiv.org/pdf/2501.16975" target="_blank" class="btn-link"><i class="far fa-file-pdf"></i> PDF</a>
+                    </div>
+                </div>
+
+                <!-- Paper 4 -->
+                <div class="pub-item">
+                    <a href="https://arxiv.org/pdf/2411.12364" target="_blank" class="pub-title">Ultra-Sparse Memory Network</a>
+                    <div class="pub-authors">Zihao Huang, Qiyang Min, Hongzhi Huang, <strong>Defa Zhu</strong>, Yutao Zeng, Ran Guo, Xun Zhou</div>
+                    <div class="pub-venue">ICLR 2025</div>
+                    <p class="pub-desc">It is widely acknowledged that the performance of Transformer models is exponentially related to their number of parameters and computational complexity. This work introduces UltraMem, incorporating large-scale, ultra-sparse memory layer to address limitations in MoE. Our approach significantly reduces inference latency while maintaining model performance.</p>
+                    <div class="pub-links">
+                        <a href="https://arxiv.org/pdf/2411.12364" target="_blank" class="btn-link"><i class="far fa-file-pdf"></i> PDF</a>
+                    </div>
+                </div>
+
+                <!-- Paper 5 -->
+                <div class="pub-item">
+                    <a href="https://arxiv.org/pdf/2409.19606" target="_blank" class="pub-title">Hyper-Connections</a>
+                    <div class="pub-authors"><strong>Defa Zhu</strong>, Hongzhi Huang, Zihao Huang, Yutao Zeng, Yunyao Mao, Banggu Wu, Qiyang Min, Xun Zhou</div>
+                    <div class="pub-venue">ICLR 2025</div>
+                    <p class="pub-desc">We present hyper-connections, a simple yet effective method that can serve as an alternative to residual connections. This approach specifically addresses common drawbacks observed in residual connection variants, such as the seesaw effect between gradient vanishing and representation collapse.</p>
+                    <div class="pub-links">
+                        <a href="https://arxiv.org/pdf/2409.19606" target="_blank" class="btn-link"><i class="far fa-file-pdf"></i> PDF</a>
+                    </div>
+                </div>
+
+            </section>
+        </main>
     </div>
-    
+
     <script>
-        // 访问量计数器逻辑
-        document.addEventListener('DOMContentLoaded', function() {
-            // 获取或创建本地存储的计数
-            let count = localStorage.getItem('visit-count');
-            
-            // 如果不存在或无效,设置初始值
-            if (!count || isNaN(parseInt(count))) {
-                count = 1500; // 起始值
-            } else {
-                count = parseInt(count);
-            }
-            
-            // 检查是否是新会话
-            const isNewSession = !sessionStorage.getItem('session-active');
-            if (isNewSession) {
-                // 新会话计数+1
-                count++;
-                localStorage.setItem('visit-count', count);
-                sessionStorage.setItem('session-active', 'true');
-            }
-            
-            // 显示计数
-            document.getElementById('visit-count').textContent = count.toLocaleString();
-        });
-        
-        // Animation types
-        const ANIMATIONS = {
-            NETWORK: 'network',
-            FLOW: 'flow',
-            SNAKE: 'snake'
+        // --- Configuration ---
+        const CONFIG = {
+            animationEnabled: false, // Default OFF
+            currentAnimation: 'network', // Default type
+            theme: localStorage.getItem('theme') || 'light'
         };
-        
-        // Global animation variables - 默认关闭
-        let animationEnabled = false;
-        let currentAnimation = null;
-        
-        // Network animation variables
-        let networkCanvas, networkCtx;
-        let nodes = [];
-        let networkAnimationId;
-        let mouseNode = {
-            x: undefined,
-            y: undefined,
-            size: 0,
-            isActive: false
-        };
-        
-        // Flow animation variables
-        let flowCanvas, flowCtx;
-        let flowAnimationId;
-        let particles = [];
-        let mouse = {
-            x: undefined,
-            y: undefined,
-            lastX: undefined,
-            lastY: undefined,
-            isActive: false,
-            velocity: { x: 0, y: 0 }
-        };
-        
-        // Flow animation config
-        const flowConfig = {
-            particleCount: 1000,
-            particleSize: { min: 1, max: 3 },
-            speed: { min: 0.5, max: 2 },
-            connectionDistance: 100,
-            mouseInfluenceDistance: 150,
-            mouseForce: 0.1,
-            mode: 'flow', // flow, orbit, wave
-            frameRate: 60
-        };
-        
-        // Colors for animations
-        let colors = {
-            primary: '',
-            secondary: '',
-            accent: '',
-            background: '',
-            flowParticles: []
-        };
-        
-        // Snake animation variables
-        let snakeIntervals = [];
-        let snakes = [];
-        const snakeConfig = {
-            gridSize: { rows: 30, cols: 40 },
-            speed: 150,
-            maxSnakes: 6,
-            segmentSize: 20,
-            minLength: 3, // Minimum length a snake can have
-            initialLength: 5, // Initial length of a new snake
-            turnChance: 0.08 // Chance to turn at each step (only left or right)
-        };
-        
-        // Initialize on document load
-        document.addEventListener('DOMContentLoaded', function() {
-            const themeToggle = document.getElementById('theme-toggle');
-            const animationToggle = document.getElementById('animation-toggle');
-            const animationSwitch = document.getElementById('animation-switch');
-            const htmlElement = document.documentElement;
-            const themeIcon = themeToggle.querySelector('i');
-            const animationIcon = animationToggle.querySelector('i');
-            
-            // Check for saved theme preference
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme) {
-                htmlElement.setAttribute('data-theme', savedTheme);
-                updateThemeIcon(savedTheme);
-            }
-            
-            // Check for saved animation preference - 默认为关闭
-            const savedAnimation = localStorage.getItem('animation');
-            if (savedAnimation === 'enabled') {
-                animationEnabled = true;
-                toggleAnimation(true);
-                updateAnimationIcon(true);
-            } else {
-                animationEnabled = false;
-                toggleAnimation(false);
-                updateAnimationIcon(false);
-            }
-            
-            // Use timestamp as part of random seed
-            const timestamp = new Date().getTime();
-            // Generate a pseudo-random number based on timestamp
-            const randomValue = Math.sin(timestamp) * 10000;
-            // Get a random value between 0 and 1
-            const randomSelector = Math.abs(randomValue - Math.floor(randomValue));
 
-            // Set flow animation as default, or use saved preference
-            const savedAnimationType = localStorage.getItem('animationType');
-            if (savedAnimationType && Object.values(ANIMATIONS).includes(savedAnimationType)) {
-                currentAnimation = savedAnimationType;
-            } else {
-                currentAnimation = ANIMATIONS.FLOW; // Default to flow animation
-            }
-            
-            // Save selection for controls to work correctly
-            localStorage.setItem('animationType', currentAnimation);
+        // --- DOM Elements ---
+        const htmlEl = document.documentElement;
+        const themeBtn = document.getElementById('theme-toggle');
+        const animBtn = document.getElementById('animation-toggle');
+        const emailLink = document.getElementById('email-link');
+        const copyMsg = document.getElementById('copy-msg');
 
-            console.log("Current animation:", currentAnimation);
-            
-            // Initialize animations
-            initAnimations();
-            
-            // Only activate animation if enabled
-            if (animationEnabled) {
-                activateAnimation(currentAnimation);
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set Theme
+            htmlEl.setAttribute('data-theme', CONFIG.theme);
+            updateThemeIcon();
+
+            // Set Animation State
+            updateAnimIcon();
+            if (CONFIG.animationEnabled) {
+                startAnimation(CONFIG.currentAnimation);
             }
-            
-            // Toggle animation on click
-            animationToggle.addEventListener('click', function() {
-                animationEnabled = !animationEnabled;
-                toggleAnimation(animationEnabled);
-                updateAnimationIcon(animationEnabled);
-                localStorage.setItem('animation', animationEnabled ? 'enabled' : 'disabled');
-                
-                if (animationEnabled) {
-                    // Restart animations
-                    restartCurrentAnimation();
-                } else {
-                    // Stop animations
-                    stopAllAnimations();
-                }
-            });
-            
-            // Switch animation on click
-            animationSwitch.addEventListener('click', function() {
-                // Get next animation type
-                const animationTypes = Object.values(ANIMATIONS);
-                const currentIndex = animationTypes.indexOf(currentAnimation);
-                const nextIndex = (currentIndex + 1) % animationTypes.length;
-                const nextAnimation = animationTypes[nextIndex];
-                
-                switchAnimation(nextAnimation);
-            });
-            
-            // Toggle theme on click
-            themeToggle.addEventListener('click', function() {
-                const currentTheme = htmlElement.getAttribute('data-theme');
-                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-                
-                htmlElement.setAttribute('data-theme', newTheme);
-                localStorage.setItem('theme', newTheme);
-                updateThemeIcon(newTheme);
-                
-                if (animationEnabled) {
-                    // Update colors for animations
-                    updateColors();
-                    
-                    // Regenerate particles for the new theme
-                    regenerateParticles();
-                }
-            });
-            
-            function updateThemeIcon(theme) {
-                if (theme === 'dark') {
-                    themeIcon.classList.remove('fa-moon');
-                    themeIcon.classList.add('fa-sun');
-                } else {
-                    themeIcon.classList.remove('fa-sun');
-                    themeIcon.classList.add('fa-moon');
-                }
-            }
-            
-            function updateAnimationIcon(enabled) {
-                if (enabled) {
-                    animationIcon.classList.remove('fa-play');
-                    animationIcon.classList.add('fa-pause');
-                    animationToggle.querySelector('.control-tooltip').textContent = 'Disable Animation';
-                } else {
-                    animationIcon.classList.remove('fa-pause');
-                    animationIcon.classList.add('fa-play');
-                    animationToggle.querySelector('.control-tooltip').textContent = 'Enable Animation';
-                }
-            }
-            
-            // Email copy functionality
-            const copyBtn = document.getElementById('copy-email-btn');
-            const emailText = document.getElementById('email-text');
-            const copiedFeedback = document.getElementById('copied-feedback');
-            
-            copyBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                // Create a temporary input element
-                const tempInput = document.createElement('input');
-                tempInput.value = emailText.textContent;
-                document.body.appendChild(tempInput);
-                
-                // Select and copy the text
-                tempInput.select();
-                document.execCommand('copy');
-                
-                // Remove the temporary input
-                document.body.removeChild(tempInput);
-                
-                // Show feedback
-                copiedFeedback.style.opacity = '1';
-                
-                // Hide feedback after 2 seconds
-                setTimeout(function() {
-                    copiedFeedback.style.opacity = '0';
-                }, 2000);
-            });
-            
-            // Initialize particles only if enabled
-            if (animationEnabled) {
-                regenerateParticles();
-                
-                // Initialize cursor follower particles
-                document.addEventListener('mousemove', handleMouseMove);
-                document.addEventListener('touchmove', handleTouchMove);
-            }
-            
-            // Handle window resize
-            window.addEventListener('resize', function() {
-                if (animationEnabled) {
-                    if (currentAnimation === ANIMATIONS.NETWORK) {
-                        resizeNetworkCanvas();
-                        initNodes();
-                    } else if (currentAnimation === ANIMATIONS.FLOW) {
-                        resizeFlowCanvas();
-                        initParticles();
-                    } else if (currentAnimation === ANIMATIONS.SNAKE) {
-                        updateGridSize();
-                        resetSnakeGame();
-                        spawnSnakes();
-                    }
-                }
-            });
+
+            // Initialize Canvas Sizes
+            resizeCanvases();
         });
-        
-        // Mouse/touch handlers
-        function handleMouseMove(e) {
-            if (currentAnimation === ANIMATIONS.NETWORK) {
-                mouseNode.x = e.clientX;
-                mouseNode.y = e.clientY;
-                mouseNode.isActive = true;
-            } else if (currentAnimation === ANIMATIONS.FLOW) {
-                mouse.lastX = mouse.x;
-                mouse.lastY = mouse.y;
-                mouse.x = e.clientX;
-                mouse.y = e.clientY;
-                mouse.isActive = true;
-            }
+
+        // --- Theme Logic ---
+        themeBtn.addEventListener('click', () => {
+            const newTheme = htmlEl.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            htmlEl.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon();
             
-            if (animationEnabled) {
-                createCursorParticle(e.clientX, e.clientY);
+            // If animation is running, update colors
+            if (CONFIG.animationEnabled) {
+                updateAnimationColors();
             }
+        });
+
+        function updateThemeIcon() {
+            const isDark = htmlEl.getAttribute('data-theme') === 'dark';
+            themeBtn.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
         }
-        
-        function handleTouchMove(e) {
+
+        // --- Email Copy Logic ---
+        emailLink.addEventListener('click', (e) => {
             e.preventDefault();
-            if (e.touches && e.touches[0]) {
-                if (currentAnimation === ANIMATIONS.NETWORK) {
-                    mouseNode.x = e.touches[0].clientX;
-                    mouseNode.y = e.touches[0].clientY;
-                    mouseNode.isActive = true;
-                } else if (currentAnimation === ANIMATIONS.FLOW) {
-                    mouse.lastX = mouse.x;
-                    mouse.lastY = mouse.y;
-                    mouse.x = e.touches[0].clientX;
-                    mouse.y = e.touches[0].clientY;
-                    mouse.isActive = true;
-                }
-                
-                if (animationEnabled) {
-                    createCursorParticle(e.touches[0].clientX, e.touches[0].clientY);
-                }
-            }
-        }
-        
-        // Initialize all animations
-        function initAnimations() {
-            // Initialize network animation
-            networkCanvas = document.getElementById('nodes-canvas');
-            networkCtx = networkCanvas.getContext('2d');
-            
-            // Initialize flow animation
-            flowCanvas = document.getElementById('flow-canvas');
-            flowCtx = flowCanvas.getContext('2d');
-            
-            // Setup event listeners for animations
-            networkCanvas.addEventListener('mousemove', handleMouseMove);
-            networkCanvas.addEventListener('mouseleave', function() {
-                mouseNode.isActive = false;
+            const email = e.target.innerText;
+            navigator.clipboard.writeText(email).then(() => {
+                copyMsg.style.opacity = '1';
+                setTimeout(() => copyMsg.style.opacity = '0', 2000);
             });
-            networkCanvas.addEventListener('touchmove', handleTouchMove);
-            networkCanvas.addEventListener('touchend', function() {
-                mouseNode.isActive = false;
-            });
+        });
+
+        // --- Animation Control Logic ---
+        animBtn.addEventListener('click', () => {
+            CONFIG.animationEnabled = !CONFIG.animationEnabled;
+            updateAnimIcon();
             
-            flowCanvas.addEventListener('mousemove', handleMouseMove);
-            flowCanvas.addEventListener('mouseleave', function() {
-                mouse.isActive = false;
-            });
-            flowCanvas.addEventListener('touchmove', handleTouchMove);
-            flowCanvas.addEventListener('touchend', function() {
-                mouse.isActive = false;
-            });
-            
-            // Initialize colors
-            updateColors();
-        }
-        
-        // Toggle all animations
-        function toggleAnimation(enabled) {
-            const networkContainer = document.getElementById('network-container');
-            const flowContainer = document.getElementById('flow-container');
-            const snakeContainer = document.getElementById('snake-container');
-            const particlesContainer = document.getElementById('particles');
-            
-            if (enabled) {
-                networkContainer.classList.remove('disabled');
-                flowContainer.classList.remove('disabled');
-                snakeContainer.classList.remove('disabled');
-                particlesContainer.classList.remove('disabled');
+            if (CONFIG.animationEnabled) {
+                // Pick a random animation if turning on
+                const anims = ['network', 'flow', 'snake'];
+                CONFIG.currentAnimation = anims[Math.floor(Math.random() * anims.length)];
+                startAnimation(CONFIG.currentAnimation);
             } else {
-                networkContainer.classList.add('disabled');
-                flowContainer.classList.add('disabled');
-                snakeContainer.classList.add('disabled');
-                particlesContainer.classList.add('disabled');
+                stopAllAnimations();
             }
+        });
+
+        function updateAnimIcon() {
+            animBtn.classList.toggle('active', CONFIG.animationEnabled);
         }
-        
-        // Switch between animations
-        function switchAnimation(newAnimation) {
-            // Stop current animation
-            deactivateAnimation(currentAnimation);
-            
-            // Set and save new animation
-            currentAnimation = newAnimation;
-            localStorage.setItem('animationType', newAnimation);
-            
-            // Start new animation if enabled
-            if (animationEnabled) {
-                activateAnimation(newAnimation);
-            }
-        }
-        
-        // Activate specific animation
-        function activateAnimation(animation) {
-            const networkContainer = document.getElementById('network-container');
-            const flowContainer = document.getElementById('flow-container');
-            const snakeContainer = document.getElementById('snake-container');
-            
-            // Hide all containers first
-            networkContainer.classList.remove('active');
-            flowContainer.classList.remove('active');
-            snakeContainer.classList.remove('active');
-            
-            // Activate the selected animation
-            if (animation === ANIMATIONS.NETWORK) {
-                networkContainer.classList.add('active');
-                
-                if (animationEnabled) {
-                    resizeNetworkCanvas();
-                    initNodes();
-                    animateNetwork();
-                }
-            } else if (animation === ANIMATIONS.FLOW) {
-                flowContainer.classList.add('active');
-                
-                if (animationEnabled) {
-                    resizeFlowCanvas();
-                    initParticles();
-                    animateFlow();
-                }
-            } else if (animation === ANIMATIONS.SNAKE) {
-                snakeContainer.classList.add('active');
-                
-                if (animationEnabled) {
-                    updateGridSize();
-                    spawnSnakes();
-                }
-            }
-        }
-        
-        // Deactivate specific animation
-        function deactivateAnimation(animation) {
-            if (animation === ANIMATIONS.NETWORK) {
-                if (networkAnimationId) {
-                    cancelAnimationFrame(networkAnimationId);
-                    networkAnimationId = null;
-                }
-            } else if (animation === ANIMATIONS.FLOW) {
-                if (flowAnimationId) {
-                    cancelAnimationFrame(flowAnimationId);
-                    flowAnimationId = null;
-                }
-            } else if (animation === ANIMATIONS.SNAKE) {
-                clearSnakeIntervals();
-                resetSnakeGame();
-            }
-        }
-        
-        // Stop all animations
+
         function stopAllAnimations() {
-            // Stop network animation
-            if (networkAnimationId) {
-                cancelAnimationFrame(networkAnimationId);
-                networkAnimationId = null;
-            }
-            
-            // Stop flow animation
-            if (flowAnimationId) {
-                cancelAnimationFrame(flowAnimationId);
-                flowAnimationId = null;
-            }
-            
-            // Stop snake animation
-            clearSnakeIntervals();
-            resetSnakeGame();
-            
-            // Remove cursor particle event listeners
-            document.removeEventListener('mousemove', handleMouseMove);
-            document.removeEventListener('touchmove', handleTouchMove);
+            document.querySelectorAll('.animation-container').forEach(el => el.classList.remove('active'));
+            if (networkReqId) cancelAnimationFrame(networkReqId);
+            if (flowReqId) cancelAnimationFrame(flowReqId);
+            if (snakeInterval) clearInterval(snakeInterval);
+            document.getElementById('snake-container').innerHTML = '';
         }
-        
-        // Restart current animation
-        function restartCurrentAnimation() {
-            if (currentAnimation === ANIMATIONS.NETWORK) {
-                resizeNetworkCanvas();
-                initNodes();
-                animateNetwork();
-            } else if (currentAnimation === ANIMATIONS.FLOW) {
-                resizeFlowCanvas();
-                initParticles();
-                animateFlow();
-            } else if (currentAnimation === ANIMATIONS.SNAKE) {
-                updateGridSize();
-                spawnSnakes();
-            }
-            
-            // Re-enable cursor particles
-            document.addEventListener('mousemove', handleMouseMove);
-            document.addEventListener('touchmove', handleTouchMove);
-            
-            // Regenerate background particles
-            regenerateParticles();
+
+        function startAnimation(type) {
+            stopAllAnimations(); // Clear others first
+            const container = document.getElementById(`${type}-container`);
+            if(container) container.classList.add('active');
+
+            if (type === 'network') initNetwork();
+            if (type === 'flow') initFlow();
+            if (type === 'snake') initSnake();
         }
+
+        // --- Animation Implementations ---
         
-        // Update colors from CSS variables
-        function updateColors() {
-            const style = getComputedStyle(document.documentElement);
-            
-            colors.primary = style.getPropertyValue('--primary-color').trim();
-            colors.secondary = style.getPropertyValue('--secondary-color').trim();
-            colors.accent = style.getPropertyValue('--accent-color').trim();
-            colors.background = style.getPropertyValue('--bg-color').trim();
-            
-            // Get flow particle colors
-            const flowColorsStr = style.getPropertyValue('--flow-particle-colors').trim();
-            colors.flowParticles = flowColorsStr.split(',').map(color => color.trim());
-            
-            // Update existing nodes colors
-            if (nodes.length > 0) {
-                const colorOptions = [colors.primary, colors.secondary, colors.accent];
-                nodes.forEach(node => {
-                    node.color = colorOptions[Math.floor(Math.random() * colorOptions.length)];
-                });
-            }
-            
-            // Update flow particles colors
-            if (particles.length > 0) {
-                particles.forEach(particle => {
-                    const colorIndex = Math.floor(Math.random() * colors.flowParticles.length);
-                    particle.color = colors.flowParticles[colorIndex];
-                    particle.originalColor = colors.flowParticles[colorIndex];
-                });
-            }
-        }
-        
-        // Network animation functions
-        function resizeNetworkCanvas() {
-            if (networkCanvas) {
-                networkCanvas.width = window.innerWidth;
-                networkCanvas.height = window.innerHeight;
-            }
-        }
-        
-        function initNodes() {
-            nodes = [];
-            const nodeCount = Math.min(Math.floor(window.innerWidth * window.innerHeight / 10000), 150);
-            const colorOptions = [colors.primary, colors.secondary, colors.accent];
-            
-            for (let i = 0; i < nodeCount; i++) {
+        // 1. Network Animation
+        let networkReqId;
+        function initNetwork() {
+            const canvas = document.getElementById('nodes-canvas');
+            const ctx = canvas.getContext('2d');
+            let nodes = [];
+            const count = 60;
+
+            for(let i=0; i<count; i++) {
                 nodes.push({
-                    x: Math.random() * networkCanvas.width,
-                    y: Math.random() * networkCanvas.height,
-                    size: Math.random() * 3 + 1,
-                    speedX: (Math.random() - 0.5) * 1,
-                    speedY: (Math.random() - 0.5) * 1,
-                    color: colorOptions[Math.floor(Math.random() * colorOptions.length)]
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5
                 });
             }
-        }
-        
-        function animateNetwork() {
-            networkAnimationId = requestAnimationFrame(animateNetwork);
-            
-            // Clear canvas
-            networkCtx.fillStyle = colors.background;
-            networkCtx.fillRect(0, 0, networkCanvas.width, networkCanvas.height);
-            
-            // Update and draw nodes
-            updateNodes();
-            drawConnections();
-            drawNodes();
-        }
-        
-        function updateNodes() {
-            nodes.forEach(node => {
-                // Update position
-                node.x += node.speedX;
-                node.y += node.speedY;
-                
-                // Bounce off edges
-                if (node.x < 0 || node.x > networkCanvas.width) {
-                    node.speedX *= -1;
-                }
-                if (node.y < 0 || node.y > networkCanvas.height) {
-                    node.speedY *= -1;
-                }
-                
-                // Slightly randomize speed for more natural movement
-                node.speedX += (Math.random() - 0.5) * 0.01;
-                node.speedY += (Math.random() - 0.5) * 0.01;
-                
-                // Limit speed
-                const maxSpeed = 1.5;
-                const speed = Math.sqrt(node.speedX * node.speedX + node.speedY * node.speedY);
-                if (speed > maxSpeed) {
-                    node.speedX = (node.speedX / speed) * maxSpeed;
-                    node.speedY = (node.speedY / speed) * maxSpeed;
-                }
-            });
-        }
-        
-        function drawNodes() {
-            nodes.forEach(node => {
-                networkCtx.beginPath();
-                networkCtx.arc(node.x, node.y, node.size, 0, Math.PI * 2);
-                networkCtx.fillStyle = node.color;
-                networkCtx.fill();
-                
-                // Add glow effect
-                const glow = networkCtx.createRadialGradient(
-                    node.x, node.y, node.size,
-                    node.x, node.y, node.size * 3
-                );
-                glow.addColorStop(0, node.color);
-                glow.addColorStop(1, 'rgba(0,0,0,0)');
-                
-                networkCtx.beginPath();
-                networkCtx.arc(node.x, node.y, node.size * 3, 0, Math.PI * 2);
-                networkCtx.fillStyle = glow;
-                networkCtx.fill();
-            });
-        }
-        
-        function drawConnections() {
-            const maxDistance = 150;
-            
-            // Draw connections between nodes
-            for (let i = 0; i < nodes.length; i++) {
-                for (let j = i + 1; j < nodes.length; j++) {
-                    const dx = nodes[i].x - nodes[j].x;
-                    const dy = nodes[i].y - nodes[j].y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    
-                    if (distance < maxDistance) {
-                        networkCtx.beginPath();
-                        networkCtx.moveTo(nodes[i].x, nodes[i].y);
-                        networkCtx.lineTo(nodes[j].x, nodes[j].y);
-                        
-                        // Create gradient line for more visual appeal
-                        const gradient = networkCtx.createLinearGradient(
-                            nodes[i].x, nodes[i].y,
-                            nodes[j].x, nodes[j].y
-                        );
-                        gradient.addColorStop(0, nodes[i].color);
-                        gradient.addColorStop(1, nodes[j].color);
-                        
-                        networkCtx.strokeStyle = gradient;
-                        networkCtx.lineWidth = (1 - distance / maxDistance) * 1;
-                        networkCtx.globalAlpha = 1 - distance / maxDistance;
-                        networkCtx.stroke();
-                        networkCtx.globalAlpha = 1;
-                    }
-                }
-            }
-            
-            // Check for mouse/touch interaction
-            if (mouseNode.isActive) {
-                for (let i = 0; i < nodes.length; i++) {
-                    const dx = mouseNode.x - nodes[i].x;
-                    const dy = mouseNode.y - nodes[i].y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    
-                    if (distance < maxDistance * 1.5) {
-                        // Create attraction effect toward mouse
-                        const angle = Math.atan2(dy, dx);
-                        const force = 0.05;
-                        
-                        nodes[i].speedX += Math.cos(angle) * force;
-                        nodes[i].speedY += Math.sin(angle) * force;
-                        
-                        // Draw connection to mouse
-                        networkCtx.beginPath();
-                        networkCtx.moveTo(mouseNode.x, mouseNode.y);
-                        networkCtx.lineTo(nodes[i].x, nodes[i].y);
-                        networkCtx.strokeStyle = nodes[i].color;
-                        networkCtx.lineWidth = (1 - distance / (maxDistance * 1.5)) * 2;
-                        networkCtx.globalAlpha = 1 - distance / (maxDistance * 1.5);
-                        networkCtx.stroke();
-                        networkCtx.globalAlpha = 1;
-                    }
-                }
-            }
-        }
-        
-        // Flow animation functions
-        function resizeFlowCanvas() {
-            if (flowCanvas) {
-                flowCanvas.width = window.innerWidth;
-                flowCanvas.height = window.innerHeight;
-            }
-        }
-        
-        function initParticles() {
-            particles = [];
-            for (let i = 0; i < flowConfig.particleCount; i++) {
-                createParticle();
-            }
-        }
-        
-        function createParticle(x, y) {
-            const colorIndex = Math.floor(Math.random() * colors.flowParticles.length);
-            const particle = {
-                x: x || Math.random() * flowCanvas.width,
-                y: y || Math.random() * flowCanvas.height,
-                size: flowConfig.particleSize.min + Math.random() * (flowConfig.particleSize.max - flowConfig.particleSize.min),
-                color: colors.flowParticles[colorIndex],
-                originalColor: colors.flowParticles[colorIndex],
-                speed: flowConfig.speed.min + Math.random() * (flowConfig.speed.max - flowConfig.speed.min),
-                velocityX: (Math.random() - 0.5) * 2,
-                velocityY: (Math.random() - 0.5) * 2,
-                angle: Math.random() * Math.PI * 2,
-                isInfluenced: false,
-                lastInfluenced: 0
-            };
-            
-            particles.push(particle);
-            return particle;
-        }
-        
-        function updateParticles() {
-            // Calculate mouse velocity
-            if (mouse.lastX !== undefined && mouse.lastY !== undefined) {
-                mouse.velocity.x = mouse.x - mouse.lastX;
-                mouse.velocity.y = mouse.y - mouse.lastY;
-            }
-            mouse.lastX = mouse.x;
-            mouse.lastY = mouse.y;
 
-            // Update each particle
-            for (const particle of particles) {
-                // Default flow behavior
-                switch (flowConfig.mode) {
-                    case 'flow':
-                        // Smooth flowing effect changing over time
-                        const time = Date.now() * 0.001;
-                        const flowX = Math.sin(time * 0.5 + particle.x * 0.01) * 0.5;
-                        const flowY = Math.cos(time * 0.3 + particle.y * 0.01) * 0.5;
-                        
-                        particle.velocityX = (particle.velocityX + flowX * 0.02) * 0.99;
-                        particle.velocityY = (particle.velocityY + flowY * 0.02) * 0.99;
-                        break;
-                        
-                    case 'orbit':
-                        // Orbital motion around center
-                        const centerX = flowCanvas.width / 2;
-                        const centerY = flowCanvas.height / 2;
-                        const dx = particle.x - centerX;
-                        const dy = particle.y - centerY;
-                        const dist = Math.sqrt(dx * dx + dy * dy);
-                        const angle = Math.atan2(dy, dx);
-                        
-                        // Apply tangential velocity
-                        const orbitSpeed = 0.5 * (1 - Math.min(dist, 300) / 300);
-                        particle.velocityX = -Math.sin(angle) * orbitSpeed;
-                        particle.velocityY = Math.cos(angle) * orbitSpeed;
-                        
-                        // Add radial component
-                        const targetDist = 100 + particle.size * 50;
-                        if (dist > targetDist) {
-                            particle.velocityX += -Math.cos(angle) * 0.02;
-                            particle.velocityY += -Math.sin(angle) * 0.02;
-                        } else if (dist < targetDist) {
-                            particle.velocityX += Math.cos(angle) * 0.02;
-                            particle.velocityY += Math.sin(angle) * 0.02;
-                        }
-                        break;
-                    
-                    case 'wave':
-                        // Wave-like motion
-                        const waveTime = Date.now() * 0.001;
-                        const yWave = Math.sin(waveTime + particle.x * 0.02) * 10;
-                        const xWave = Math.cos(waveTime * 0.7 + particle.y * 0.02) * 5;
-                        
-                        // Wave push effect
-                        particle.velocityY = (particle.velocityY + yWave * 0.01) * 0.98;
-                        particle.velocityX = (particle.velocityX + xWave * 0.01) * 0.98;
-                        break;
-                }
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                const color = getComputedStyle(htmlEl).getPropertyValue('--primary-color').trim();
                 
-                // Mouse influence
-                if (mouse.isActive && mouse.x !== undefined && mouse.y !== undefined) {
-                    const dx = particle.x - mouse.x;
-                    const dy = particle.y - mouse.y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    
-                    if (distance < flowConfig.mouseInfluenceDistance) {
-                        // Mark particle as influenced
-                        particle.isInfluenced = true;
-                        particle.lastInfluenced = Date.now();
-                        
-                        // Calculate influence strength
-                        const force = (flowConfig.mouseInfluenceDistance - distance) / flowConfig.mouseInfluenceDistance;
-                        
-                        // Apply mouse velocity influence
-                        if (Math.abs(mouse.velocity.x) > 0.1 || Math.abs(mouse.velocity.y) > 0.1) {
-                            particle.velocityX += mouse.velocity.x * force * flowConfig.mouseForce;
-                            particle.velocityY += mouse.velocity.y * force * flowConfig.mouseForce;
-                        } else {
-                            // If mouse isn't moving, apply repulsion
-                            const angle = Math.atan2(dy, dx);
-                            particle.velocityX += Math.cos(angle) * force * 0.5;
-                            particle.velocityY += Math.sin(angle) * force * 0.5;
-                        }
-                        
-                        // Change color of influenced particles
-                        const influenceRatio = force * 0.8 + 0.2;
-                        particle.color = shiftColor(particle.originalColor, '#ffffff', influenceRatio);
-                    } else if (particle.isInfluenced) {
-                        // Gradually restore original color
-                        const timeSinceInfluence = Date.now() - particle.lastInfluenced;
-                        if (timeSinceInfluence > 500) {
-                            particle.isInfluenced = false;
-                            particle.color = particle.originalColor;
-                        } else {
-                            const ratio = 1 - timeSinceInfluence / 500;
-                            particle.color = shiftColor(particle.originalColor, '#ffffff', ratio);
-                        }
-                    }
-                }
+                ctx.fillStyle = color;
+                ctx.strokeStyle = color;
 
-                // Update position
-                particle.x += particle.velocityX * particle.speed;
-                particle.y += particle.velocityY * particle.speed;
-                
-                // Wrap around edges
-                if (particle.x < 0) {
-                    particle.x = flowCanvas.width;
-                } else if (particle.x > flowCanvas.width) {
-                    particle.x = 0;
-                }
-                
-                if (particle.y < 0) {
-                    particle.y = flowCanvas.height;
-                } else if (particle.y > flowCanvas.height) {
-                    particle.y = 0;
-                }
-            }
-        }
-        
-        function shiftColor(color1, color2, ratio) {
-            if (color1.startsWith('#')) {
-                color1 = hexToRgb(color1);
-            }
-            if (color2.startsWith('#')) {
-                color2 = hexToRgb(color2);
-            }
-            
-            const r = Math.floor(color1.r + (color2.r - color1.r) * ratio);
-            const g = Math.floor(color1.g + (color2.g - color1.g) * ratio);
-            const b = Math.floor(color1.b + (color2.b - color1.b) * ratio);
-            
-            return `rgb(${r}, ${g}, ${b})`;
-        }
-        
-        function hexToRgb(hex) {
-            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-            return result ? {
-                r: parseInt(result[1], 16),
-                g: parseInt(result[2], 16),
-                b: parseInt(result[3], 16)
-            } : null;
-        }
-        
-        function drawParticles() {
-            flowCtx.clearRect(0, 0, flowCanvas.width, flowCanvas.height);
-            
-            // Set global composite operation for glow effects
-            flowCtx.globalCompositeOperation = 'lighter';
-            
-            // Draw connections between particles
-            flowCtx.globalAlpha = 0.2;
-            for (let i = 0; i < particles.length; i++) {
-                for (let j = i + 1; j < particles.length; j++) {
-                    const dx = particles[i].x - particles[j].x;
-                    const dy = particles[i].y - particles[j].y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    
-                    if (distance < flowConfig.connectionDistance) {
-                        const alpha = 1 - distance / flowConfig.connectionDistance;
-                        flowCtx.strokeStyle = shiftColor(particles[i].color, particles[j].color, 0.5);
-                        flowCtx.globalAlpha = alpha * 0.15;
-                        flowCtx.lineWidth = Math.min(particles[i].size, particles[j].size) * 0.5;
-                        
-                        flowCtx.beginPath();
-                        flowCtx.moveTo(particles[i].x, particles[i].y);
-                        flowCtx.lineTo(particles[j].x, particles[j].y);
-                        flowCtx.stroke();
-                    }
-                }
-            }
-            
-            // Draw individual particles
-            flowCtx.globalAlpha = 1;
-            for (const particle of particles) {
-                flowCtx.fillStyle = particle.color;
-                flowCtx.beginPath();
-                flowCtx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-                flowCtx.fill();
-                
-                // Add glow effect for influenced particles
-                if (particle.isInfluenced) {
-                    flowCtx.globalAlpha = 0.4;
-                    flowCtx.shadowBlur = 10;
-                    flowCtx.shadowColor = particle.color;
-                    flowCtx.beginPath();
-                    flowCtx.arc(particle.x, particle.y, particle.size * 2, 0, Math.PI * 2);
-                    flowCtx.fill();
-                    flowCtx.shadowBlur = 0;
-                    flowCtx.globalAlpha = 1;
-                }
-            }
-            
-            // Reset composite operation
-            flowCtx.globalCompositeOperation = 'source-over';
-        }
-        
-        function animateFlow() {
-            flowAnimationId = requestAnimationFrame(animateFlow);
-            updateParticles();
-            drawParticles();
-        }
-        
-        // Mode switching for flow animation
-        flowCanvas?.addEventListener('click', function() {
-            const modes = ['flow', 'orbit', 'wave'];
-            const currentIndex = modes.indexOf(flowConfig.mode);
-            const nextIndex = (currentIndex + 1) % modes.length;
-            flowConfig.mode = modes[nextIndex];
-        });
-        
-        // Snake animation functions
-        function updateGridSize() {
-            const containerWidth = window.innerWidth;
-            const containerHeight = window.innerHeight;
-            
-            // Adjust segment size based on screen dimensions
-            snakeConfig.segmentSize = Math.max(10, Math.min(20, Math.floor(Math.min(containerWidth, containerHeight) / 40)));
-            
-            // Calculate grid size
-            snakeConfig.gridSize.cols = Math.floor(containerWidth / snakeConfig.segmentSize);
-            snakeConfig.gridSize.rows = Math.floor(containerHeight / snakeConfig.segmentSize);
-        }
-        
-        function clearSnakeIntervals() {
-            snakeIntervals.forEach(interval => clearInterval(interval));
-            snakeIntervals = [];
-        }
-        
-        function resetSnakeGame() {
-            clearSnakeIntervals();
-            snakes = [];
-            
-            // Remove all snake segments and food
-            document.querySelectorAll('.snake-segment, .snake-food').forEach(el => el.remove());
-        }
-        
-        function spawnSnakes() {
-            resetSnakeGame();
-            
-            // Determine number of snakes based on screen size
-            const snakeCount = Math.min(Math.max(Math.floor(window.innerWidth / 250), 2), snakeConfig.maxSnakes);
-            
-            for (let i = 0; i < snakeCount; i++) {
-                createSnake();
-            }
-        }
-        
-        function createSnake() {
-            const container = document.getElementById('snake-container');
-            
-            // Generate random starting position
-            const x = Math.floor(Math.random() * (snakeConfig.gridSize.cols - 10)) + 5;
-            const y = Math.floor(Math.random() * (snakeConfig.gridSize.rows - 10)) + 5;
-            
-            // Choose a random initial direction
-            const directions = [
-                { x: 1, y: 0 },   // Right
-                { x: -1, y: 0 },  // Left
-                { x: 0, y: 1 },   // Down
-                { x: 0, y: -1 }   // Up
-            ];
-            const initialDirection = directions[Math.floor(Math.random() * directions.length)];
-            
-            // Create snake with initial segments based on direction
-            const segments = [];
-            for (let i = 0; i < snakeConfig.initialLength; i++) {
-                segments.push({ 
-                    x: x - (initialDirection.x * i), 
-                    y: y - (initialDirection.y * i) 
-                });
-            }
-            
-            const snake = {
-                segments: segments,
-                direction: initialDirection,
-                food: null,
-                dead: false
-            };
-            
-            // Add to snakes array
-            snakes.push(snake);
-            
-            // Render initial snake
-            renderSnake(snake);
-            
-            // Place food for this snake
-            placeFood(snake);
-            
-            // Start snake movement
-            const interval = setInterval(() => {
-                if (animationEnabled && currentAnimation === ANIMATIONS.SNAKE) {
-                    if (!snake.dead) {
-                        moveSnake(snake);
-                    }
-                }
-            }, snakeConfig.speed);
-            
-            snakeIntervals.push(interval);
-        }
-        
-        function renderSnake(snake) {
-            const container = document.getElementById('snake-container');
-            
-            // Remove existing snake segments
-            document.querySelectorAll(`.snake-segment[data-snake-id="${snakes.indexOf(snake)}"]`).forEach(el => el.remove());
-            
-            // Render snake segments
-            snake.segments.forEach((segment, index) => {
-                const segmentElement = document.createElement('div');
-                segmentElement.className = `snake-segment ${index === 0 ? 'snake-head' : 'snake-body'}`;
-                segmentElement.dataset.snakeId = snakes.indexOf(snake);
-                segmentElement.style.width = `${snakeConfig.segmentSize - 2}px`;
-                segmentElement.style.height = `${snakeConfig.segmentSize - 2}px`;
-                segmentElement.style.left = `${segment.x * snakeConfig.segmentSize}px`;
-                segmentElement.style.top = `${segment.y * snakeConfig.segmentSize}px`;
-                
-                // Add pop animation for new heads
-                if (index === 0) {
-                    segmentElement.style.animation = 'snakePop 0.2s ease-out';
-                }
-                
-                container.appendChild(segmentElement);
-            });
-        }
-        
-        function placeFood(snake) {
-            const container = document.getElementById('snake-container');
-            
-            // Remove existing food
-            if (snake.food) {
-                document.querySelector(`.snake-food[data-snake-id="${snakes.indexOf(snake)}"]`)?.remove();
-            }
-            
-            // Find an empty position for food
-            let foodPos;
-            let attempts = 0;
-            const maxAttempts = 50;
-            
-            do {
-                foodPos = {
-                    x: Math.floor(Math.random() * snakeConfig.gridSize.cols),
-                    y: Math.floor(Math.random() * snakeConfig.gridSize.rows)
-                };
-                attempts++;
-                
-                if (attempts > maxAttempts) {
-                    // If we can't find an empty spot after many attempts, just place it anywhere
-                    break;
-                }
-            } while (isPositionOccupied(foodPos));
-            
-            snake.food = foodPos;
-            
-            // Create food element
-            const foodElement = document.createElement('div');
-            foodElement.className = 'snake-food';
-            foodElement.dataset.snakeId = snakes.indexOf(snake);
-            foodElement.style.width = `${snakeConfig.segmentSize - 4}px`;
-            foodElement.style.height = `${snakeConfig.segmentSize - 4}px`;
-            foodElement.style.left = `${foodPos.x * snakeConfig.segmentSize + 2}px`;
-            foodElement.style.top = `${foodPos.y * snakeConfig.segmentSize + 2}px`;
-            
-            container.appendChild(foodElement);
-        }
-        
-        function isPositionOccupied(pos) {
-            for (const snake of snakes) {
-                for (const segment of snake.segments) {
-                    if (segment.x === pos.x && segment.y === pos.y) {
-                        return true;
-                    }
-                }
-                if (snake.food && snake.food.x === pos.x && snake.food.y === pos.y) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        
-        function moveSnake(snake) {
-            // Randomly decide if snake should turn
-            if (Math.random() < snakeConfig.turnChance) {
-                // Turn left or right (not backwards)
-                turnSnake(snake);
-            }
-            
-            // Calculate next head position
-            const head = snake.segments[0];
-            const newHead = {
-                x: head.x + snake.direction.x,
-                y: head.y + snake.direction.y
-            };
-            
-            // Check if the snake would hit a wall
-            if (newHead.x < 0 || newHead.x >= snakeConfig.gridSize.cols || 
-                newHead.y < 0 || newHead.y >= snakeConfig.gridSize.rows) {
-                // Turn to avoid the wall
-                turnAwayFromWall(snake);
-                return; // Skip this movement
-            }
-            
-            // Check if snake would hit itself (cannibalism)
-            let selfCollision = false;
-            for (let i = 1; i < snake.segments.length; i++) {
-                const segment = snake.segments[i];
-                if (newHead.x === segment.x && newHead.y === segment.y) {
-                    // Snake is eating itself - remove the segments it "eats"
-                    selfCollision = true;
-                    snake.segments = snake.segments.slice(0, i);
-                    
-                    // Remove corresponding DOM elements
-                    const snakeId = snakes.indexOf(snake);
-                    const elementsToRemove = document.querySelectorAll(`.snake-segment[data-snake-id="${snakeId}"]`);
-                    if (elementsToRemove.length > i) {
-                        for (let j = i; j < elementsToRemove.length; j++) {
-                            elementsToRemove[j].remove();
+                nodes.forEach((node, i) => {
+                    node.x += node.vx;
+                    node.y += node.vy;
+
+                    if(node.x < 0 || node.x > canvas.width) node.vx *= -1;
+                    if(node.y < 0 || node.y > canvas.height) node.vy *= -1;
+
+                    ctx.beginPath();
+                    ctx.arc(node.x, node.y, 2, 0, Math.PI*2);
+                    ctx.fill();
+
+                    for(let j=i+1; j<nodes.length; j++) {
+                        const dx = nodes[j].x - node.x;
+                        const dy = nodes[j].y - node.y;
+                        const dist = Math.sqrt(dx*dx + dy*dy);
+                        if(dist < 150) {
+                            ctx.globalAlpha = 1 - (dist/150);
+                            ctx.lineWidth = 0.5;
+                            ctx.beginPath();
+                            ctx.moveTo(node.x, node.y);
+                            ctx.lineTo(nodes[j].x, nodes[j].y);
+                            ctx.stroke();
                         }
                     }
-                    
-                    break;
-                }
-            }
-            
-            // Check for collisions with other snakes
-            let otherSnakeCollision = false;
-            let headOnCollision = false;
-            
-            for (let i = 0; i < snakes.length; i++) {
-                const otherSnake = snakes[i];
-                if (otherSnake !== snake && !otherSnake.dead) {
-                    
-                    // Check for head-on collision (both heads collide)
-                    if (newHead.x === otherSnake.segments[0].x + otherSnake.direction.x && 
-                        newHead.y === otherSnake.segments[0].y + otherSnake.direction.y) {
-                        headOnCollision = true;
-                        killSnake(otherSnake);
-                        killSnake(snake);
-                        break;
-                    }
-                    
-                    // Check for collision with other snake's body
-                    for (let j = 0; j < otherSnake.segments.length; j++) {
-                        const otherSegment = otherSnake.segments[j];
-                        if (newHead.x === otherSegment.x && newHead.y === otherSegment.y) {
-                            otherSnakeCollision = true;
-                            
-                            if (j === 0) {
-                                // Head-to-head collision - both snakes die
-                                killSnake(otherSnake);
-                                killSnake(snake);
-                            } else {
-                                // Eat the other snake's body from this point
-                                const eatenSegments = otherSnake.segments.splice(j);
-                                
-                                // Remove eaten segments from DOM
-                                const otherSnakeId = snakes.indexOf(otherSnake);
-                                for (let k = j; k < otherSnake.segments.length + eatenSegments.length; k++) {
-                                    document.querySelector(`.snake-segment[data-snake-id="${otherSnakeId}"][style*="left: ${otherSegment.x * snakeConfig.segmentSize}px"][style*="top: ${otherSegment.y * snakeConfig.segmentSize}px"]`)?.remove();
-                                }
-                                
-                                // Update the other snake's rendering
-                                renderSnake(otherSnake);
-                                
-                                // Check if the other snake has become too short
-                                if (otherSnake.segments.length < snakeConfig.minLength) {
-                                    killSnake(otherSnake);
-                                }
-                            }
-                            break;
-                        }
-                    }
-                    
-                    if (headOnCollision || otherSnakeCollision) break;
-                }
-            }
-            
-            // If snake died due to collision, don't continue
-            if (snake.dead) return;
-            
-            // Check if food is eaten
-            let ateFood = false;
-            if (snake.food && newHead.x === snake.food.x && newHead.y === snake.food.y) {
-                ateFood = true;
-                placeFood(snake); // Place new food
-            }
-            
-            // Add new head
-            snake.segments.unshift(newHead);
-            
-            // If we didn't eat food or hit anything, remove the tail 
-            if (!ateFood && !selfCollision && !otherSnakeCollision) {
-                snake.segments.pop(); // Remove tail
-            }
-            
-            // Check if snake should move toward food
-            if (snake.food && Math.random() < 0.3) {
-                moveTowardFood(snake);
-            }
-            
-            // Render updated snake
-            renderSnake(snake);
-        }
-        
-        // Turn snake left or right (not backwards)
-        function turnSnake(snake) {
-            // Define left and right turns based on current direction
-            const turns = {
-                'up': ['left', 'right'],
-                'down': ['right', 'left'],
-                'left': ['down', 'up'],
-                'right': ['up', 'down']
-            };
-            
-            // Convert direction to string for lookup
-            let directionStr;
-            if (snake.direction.x === 1) directionStr = 'right';
-            else if (snake.direction.x === -1) directionStr = 'left';
-            else if (snake.direction.y === 1) directionStr = 'down';
-            else if (snake.direction.y === -1) directionStr = 'up';
-            
-            // Get possible turns
-            const possibleTurns = turns[directionStr];
-            
-            // Choose a random turn
-            const turn = possibleTurns[Math.floor(Math.random() * 2)];
-            
-            // Apply the new direction
-            switch (turn) {
-                case 'up':
-                    snake.direction = { x: 0, y: -1 };
-                    break;
-                case 'down':
-                    snake.direction = { x: 0, y: 1 };
-                    break;
-                case 'left':
-                    snake.direction = { x: -1, y: 0 };
-                    break;
-                case 'right':
-                    snake.direction = { x: 1, y: 0 };
-                    break;
-            }
-        }
-        
-        // Turn away from a wall
-        function turnAwayFromWall(snake) {
-            const head = snake.segments[0];
-            
-            // Check which directions are available (not walls)
-            const availableDirections = [];
-            
-            if (head.x > 0) availableDirections.push({ x: -1, y: 0 }); // Left
-            if (head.x < snakeConfig.gridSize.cols - 1) availableDirections.push({ x: 1, y: 0 }); // Right
-            if (head.y > 0) availableDirections.push({ x: 0, y: -1 }); // Up
-            if (head.y < snakeConfig.gridSize.rows - 1) availableDirections.push({ x: 0, y: 1 }); // Down
-            
-            // Filter out the opposite of current direction (no 180° turns)
-            const validDirections = availableDirections.filter(dir => 
-                !(dir.x === -snake.direction.x && dir.y === -snake.direction.y)
-            );
-            
-            if (validDirections.length > 0) {
-                // Choose a random direction from valid ones
-                snake.direction = validDirections[Math.floor(Math.random() * validDirections.length)];
-            }
-            // If no valid direction (trapped in corner), we'll just let it hit the wall and die
-        }
-        
-        function killSnake(snake) {
-            snake.dead = true;
-            
-            // Animate death
-            const snakeId = snakes.indexOf(snake);
-            const segments = document.querySelectorAll(`.snake-segment[data-snake-id="${snakeId}"]`);
-            
-            segments.forEach((segment, index) => {
-                segment.style.animation = `snakeDeath 0.5s ${index * 0.05}s forwards`;
-                
-                // Remove after animation completes
-                setTimeout(() => {
-                    segment.remove();
-                }, 500 + index * 50);
-            });
-            
-            // Remove food
-            document.querySelector(`.snake-food[data-snake-id="${snakeId}"]`)?.remove();
-            
-            // Create a new snake after a delay
-            setTimeout(() => {
-                if (animationEnabled && currentAnimation === ANIMATIONS.SNAKE) {
-                    createSnake();
-                }
-            }, 1500);
-        }
-        
-        function moveTowardFood(snake) {
-            if (!snake.food) return;
-            
-            const head = snake.segments[0];
-            
-            // Current direction as string
-            let currentDir;
-            if (snake.direction.x === 1) currentDir = 'right';
-            else if (snake.direction.x === -1) currentDir = 'left';
-            else if (snake.direction.y === 1) currentDir = 'down';
-            else if (snake.direction.y === -1) currentDir = 'up';
-            
-            // Potential directions to get to food
-            let potentialDirs = [];
-            
-            // Horizontal movement needed
-            if (head.x < snake.food.x) {
-                potentialDirs.push('right');
-            } else if (head.x > snake.food.x) {
-                potentialDirs.push('left');
-            }
-            
-            // Vertical movement needed
-            if (head.y < snake.food.y) {
-                potentialDirs.push('down');
-            } else if (head.y > snake.food.y) {
-                potentialDirs.push('up');
-            }
-            
-            // If we have potential directions and need to change direction
-            if (potentialDirs.length > 0 && !potentialDirs.includes(currentDir)) {
-                // Filter directions that would cause a 180° turn
-                const opposites = { 'up': 'down', 'down': 'up', 'left': 'right', 'right': 'left' };
-                potentialDirs = potentialDirs.filter(dir => dir !== opposites[currentDir]);
-                
-                // If we still have valid directions, choose one randomly
-                if (potentialDirs.length > 0) {
-                    const newDir = potentialDirs[Math.floor(Math.random() * potentialDirs.length)];
-                    
-                    // Set the new direction
-                    switch (newDir) {
-                        case 'up':
-                            snake.direction = { x: 0, y: -1 };
-                            break;
-                        case 'down':
-                            snake.direction = { x: 0, y: 1 };
-                            break;
-                        case 'left':
-                            snake.direction = { x: -1, y: 0 };
-                            break;
-                        case 'right':
-                            snake.direction = { x: 1, y: 0 };
-                            break;
-                    }
-                }
-            }
-        }
-        
-        // Background particles functions
-        function regenerateParticles() {
-            const particlesContainer = document.getElementById('particles');
-            // Clear existing particles
-            particlesContainer.innerHTML = '';
-            
-            if (!animationEnabled) return;
-            
-            const particleCount = 50;
-            
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('particle');
-                
-                // Random position
-                const left = Math.random() * 100;
-                const top = Math.random() * 100;
-                
-                // Random size
-                const size = Math.random() * 3 + 1;
-                
-                // Random opacity
-                const opacity = Math.random() * 0.3 + 0.05;
-                
-                // Apply styles
-                particle.style.left = `${left}%`;
-                particle.style.top = `${top}%`;
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                particle.style.opacity = opacity;
-                
-                // Random animation
-                const duration = Math.random() * 50 + 30;
-                particle.style.animation = `float ${duration}s infinite ease-in-out`;
-                
-                particlesContainer.appendChild(particle);
-            }
-        }
-        
-        // Cursor particles
-        function createCursorParticle(x, y) {
-            if (!animationEnabled) return;
-            
-            // Get current theme colors
-            const isDarkTheme = document.documentElement.getAttribute('data-theme') === 'dark';
-            
-            // Create multiple particles for each mouse movement
-            const particleCount = Math.floor(Math.random() * 3) + 1;
-            
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('cursor-particle');
-                
-                // Random size between 2px and 6px
-                const size = Math.random() * 4 + 2;
-                
-                // Random color from gradient - different for each theme
-                const colors = isDarkTheme ? 
-                    [
-                        'rgba(0, 195, 255, 0.7)',   // primary color for dark
-                        'rgba(112, 0, 255, 0.7)',   // secondary color for dark
-                        'rgba(0, 255, 208, 0.7)'    // accent color for dark
-                    ] : 
-                    [
-                        'rgba(0, 132, 255, 0.7)',   // primary color for light
-                        'rgba(112, 0, 255, 0.7)',   // secondary color for light
-                        'rgba(0, 201, 183, 0.7)'    // accent color for light
-                    ];
-                
-                const color = colors[Math.floor(Math.random() * colors.length)];
-                
-                // Random position offset from cursor
-                const offsetX = (Math.random() - 0.5) * 20;
-                const offsetY = (Math.random() - 0.5) * 20;
-                
-                // Apply styles
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                particle.style.background = color;
-                particle.style.left = `${x + offsetX}px`;
-                particle.style.top = `${y + offsetY}px`;
-                
-                // Add to document
-                document.body.appendChild(particle);
-                
-                // Add random movement
-                const angle = Math.random() * Math.PI * 2;
-                const speed = Math.random() * 2 + 1;
-                const velocityX = Math.cos(angle) * speed;
-                const velocityY = Math.sin(angle) * speed;
-                
-                // Movement animation
-                let posX = x + offsetX;
-                let posY = y + offsetY;
-                
-                // Duration before removal (0.8 to 1.5 seconds)
-                const duration = Math.random() * 700 + 800;
-                
-                // Start time for animation
-                const startTime = Date.now();
-                
-                function animateParticle() {
-                    const elapsed = Date.now() - startTime;
-                    
-                    if (elapsed < duration) {
-                        posX += velocityX;
-                        posY += velocityY;
-                        
-                        particle.style.left = `${posX}px`;
-                        particle.style.top = `${posY}px`;
-                        
-                        // Reduce opacity over time
-                        const opacity = 1 - (elapsed / duration);
-                        particle.style.opacity = opacity;
-                        
-                        requestAnimationFrame(animateParticle);
-                    } else {
-                        // Remove particle when animation is complete
-                        particle.remove();
-                    }
-                }
-                
-                requestAnimationFrame(animateParticle);
-            }
-        }
-        
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
+                    ctx.globalAlpha = 1;
                 });
-            });
-        });
+                networkReqId = requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        // 2. Flow Animation
+        let flowReqId;
+        function initFlow() {
+            const canvas = document.getElementById('flow-canvas');
+            const ctx = canvas.getContext('2d');
+            const particles = [];
+            const count = 100;
+
+            for(let i=0; i<count; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 3,
+                    speed: Math.random() * 0.5 + 0.2
+                });
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                const color = getComputedStyle(htmlEl).getPropertyValue('--primary-color').trim();
+                ctx.fillStyle = color;
+
+                particles.forEach(p => {
+                    p.y -= p.speed;
+                    if(p.y < 0) p.y = canvas.height;
+                    
+                    ctx.globalAlpha = Math.random() * 0.5 + 0.1;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+                    ctx.fill();
+                });
+                flowReqId = requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        // 3. Snake Animation
+        let snakeInterval;
+        function initSnake() {
+            const container = document.getElementById('snake-container');
+            const size = 20;
+            const cols = Math.floor(window.innerWidth / size);
+            const rows = Math.floor(window.innerHeight / size);
+            
+            let snake = [{x: 10, y: 10}, {x: 9, y: 10}, {x: 8, y: 10}];
+            let dir = {x: 1, y: 0};
+            let food = {x: 15, y: 10};
+
+            function render() {
+                container.innerHTML = '';
+                snake.forEach((seg, i) => {
+                    const el = document.createElement('div');
+                    el.className = i === 0 ? 'snake-segment snake-head' : 'snake-segment snake-body';
+                    el.style.width = (size-2) + 'px';
+                    el.style.height = (size-2) + 'px';
+                    el.style.left = (seg.x * size) + 'px';
+                    el.style.top = (seg.y * size) + 'px';
+                    container.appendChild(el);
+                });
+                const fEl = document.createElement('div');
+                fEl.className = 'snake-food';
+                fEl.style.width = (size-4) + 'px';
+                fEl.style.height = (size-4) + 'px';
+                fEl.style.left = (food.x * size + 2) + 'px';
+                fEl.style.top = (food.y * size + 2) + 'px';
+                container.appendChild(fEl);
+            }
+
+            function update() {
+                const head = {x: snake[0].x + dir.x, y: snake[0].y + dir.y};
+                if(head.x < 0) head.x = cols-1;
+                if(head.x >= cols) head.x = 0;
+                if(head.y < 0) head.y = rows-1;
+                if(head.y >= rows) head.y = 0;
+
+                snake.unshift(head);
+
+                if(head.x === food.x && head.y === food.y) {
+                    food = {
+                        x: Math.floor(Math.random() * cols),
+                        y: Math.floor(Math.random() * rows)
+                    };
+                } else {
+                    snake.pop();
+                }
+                render();
+            }
+
+            function aiMove() {
+                if(food.x > snake[0].x && dir.x !== -1) dir = {x: 1, y: 0};
+                else if(food.x < snake[0].x && dir.x !== 1) dir = {x: -1, y: 0};
+                else if(food.y > snake[0].y && dir.y !== -1) dir = {x: 0, y: 1};
+                else if(food.y < snake[0].y && dir.y !== 1) dir = {x: 0, y: -1};
+                update();
+            }
+
+            snakeInterval = setInterval(aiMove, 100);
+        }
+
+        // --- Utilities ---
+        function resizeCanvases() {
+            const w = window.innerWidth;
+            const h = window.innerHeight;
+            const c1 = document.getElementById('nodes-canvas');
+            const c2 = document.getElementById('flow-canvas');
+            if(c1) { c1.width = w; c1.height = h; }
+            if(c2) { c2.width = w; c2.height = h; }
+        }
+        
+        function updateAnimationColors() {
+            if(CONFIG.currentAnimation === 'network' && CONFIG.animationEnabled) {
+                stopAllAnimations();
+                initNetwork();
+            }
+        }
+
+        window.addEventListener('resize', resizeCanvases);
+
     </script>
 </body>
 </html>
