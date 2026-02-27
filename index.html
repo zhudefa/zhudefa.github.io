@@ -5,31 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Defa Zhu (朱德发) | AI Researcher</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- 引入不蒜子统计 (Busuanzi) -->
     <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     
     <style>
         :root {
-            /* Academic Theme - Light */
-            --primary-color: #2563eb; /* Academic Blue */
-            --text-main: #111827;     /* Almost Black */
-            --text-secondary: #4b5563; /* Dark Gray */
-            --text-muted: #6b7280;    /* Light Gray */
+            --primary-color: #2563eb;
+            --text-main: #111827;
+            --text-secondary: #4b5563;
+            --text-muted: #6b7280;
             --bg-body: #ffffff;
             --bg-sidebar: #f9fafb;
             --border-color: #e5e7eb;
             --hover-bg: #f3f4f6;
             --tag-bg: #eff6ff;
             --tag-text: #1d4ed8;
-            
-            /* Animation colors */
             --snake-head: rgba(37, 99, 235, 0.9);
             --snake-body: rgba(96, 165, 250, 0.7);
             --snake-food: rgba(16, 185, 129, 0.8);
         }
         
         [data-theme="dark"] {
-            /* Academic Theme - Dark */
             --primary-color: #60a5fa;
             --text-main: #f9fafb;
             --text-secondary: #d1d5db;
@@ -57,7 +52,6 @@
             overflow-x: hidden;
         }
 
-        /* Layout Structure */
         .layout-wrapper {
             display: flex;
             min-height: 100vh;
@@ -65,7 +59,6 @@
             margin: 0 auto;
         }
 
-        /* Sidebar Styling */
         .sidebar {
             width: 300px;
             background-color: var(--bg-sidebar);
@@ -83,15 +76,14 @@
 
         .main-content {
             flex: 1;
-            padding: 60px 80px; /* Increased padding for cleaner look */
+            padding: 60px 80px;
             max-width: 900px;
         }
 
-        /* Profile Section */
         .profile-img {
             width: 160px;
             height: 160px;
-            border-radius: 50%; /* Circle looks classic */
+            border-radius: 50%;
             object-fit: cover;
             margin-bottom: 25px;
             border: 1px solid var(--border-color);
@@ -152,7 +144,46 @@
             color: var(--text-muted);
         }
 
-        /* Main Content Styling */
+        /* ===== Sidebar Navigation (NEW) ===== */
+        .sidebar-nav {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .sidebar-nav .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .sidebar-nav .nav-link:hover {
+            background: var(--hover-bg);
+            color: var(--primary-color);
+        }
+
+        .sidebar-nav .nav-link i {
+            width: 16px;
+            text-align: center;
+            color: var(--text-muted);
+            transition: color 0.2s;
+        }
+
+        .sidebar-nav .nav-link:hover i {
+            color: var(--primary-color);
+        }
+        /* ===== End Sidebar Navigation ===== */
+
         section {
             margin-bottom: 70px;
         }
@@ -174,9 +205,8 @@
             text-align: justify;
         }
 
-        /* Publication List - Clean Layout */
         .pub-item {
-            margin-bottom: 40px; /* Space between papers */
+            margin-bottom: 40px;
             display: block;
         }
 
@@ -190,7 +220,6 @@
             text-decoration: none;
         }
         
-        /* Optional: Hover effect on title if you want it to look like a link */
         .pub-title:hover {
             color: var(--primary-color);
         }
@@ -206,13 +235,11 @@
             gap: 6px;
         }
 
-        /* Highlight user's name */
         .pub-authors strong {
             color: var(--text-main);
             font-weight: 600;
         }
 
-        /* Role Badge Style (Project Lead) */
         .role-badge {
             display: inline-flex;
             align-items: center;
@@ -220,7 +247,7 @@
             background-color: var(--tag-bg);
             color: var(--tag-text);
             padding: 2px 8px;
-            border-radius: 12px; /* Pill shape */
+            border-radius: 12px;
             font-weight: 600;
             vertical-align: middle;
             border: 1px solid rgba(37, 99, 235, 0.15);
@@ -240,7 +267,7 @@
             margin-bottom: 12px;
             line-height: 1.5;
             display: -webkit-box;
-            -webkit-line-clamp: 3; /* Limit to 3 lines */
+            -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
@@ -275,7 +302,6 @@
             font-size: 0.9em;
         }
 
-        /* Footer & Controls */
         .sidebar-footer {
             margin-top: auto;
             padding-top: 30px;
@@ -304,15 +330,14 @@
             color: var(--primary-color);
         }
 
-        /* --- Visit Count Toggle Logic --- */
         .visit-count {
             display: flex;
             align-items: center;
             gap: 6px;
             margin-top: 10px;
             font-size: 0.75rem;
-            cursor: pointer; /* Indicates clickable */
-            user-select: none; /* Prevents text selection on click */
+            cursor: pointer;
+            user-select: none;
             transition: color 0.2s;
         }
         
@@ -320,17 +345,14 @@
             color: var(--primary-color);
         }
 
-        /* When masked (default): Hide data, Show placeholder */
         .visit-count.masked #busuanzi_container_site_pv {
-            display: none !important; /* Override inline style from script */
+            display: none !important;
         }
         
-        /* When NOT masked (clicked): Hide placeholder */
         .visit-count:not(.masked) .visit-placeholder {
             display: none;
         }
 
-        /* Animation Containers (Hidden by default) */
         .animation-container {
             position: fixed;
             top: 0;
@@ -347,14 +369,12 @@
             opacity: 0.6;
         }
 
-        /* Snake Specifics */
         #snake-container { background: transparent; }
         .snake-segment { position: absolute; border-radius: 2px; }
         .snake-head { background-color: var(--snake-head); z-index: 2; }
         .snake-body { background-color: var(--snake-body); z-index: 1; }
         .snake-food { position: absolute; background-color: var(--snake-food); border-radius: 50%; z-index: 1; }
 
-        /* Mobile Responsiveness */
         @media (max-width: 900px) {
             .layout-wrapper {
                 flex-direction: column;
@@ -375,9 +395,12 @@
                 justify-content: space-between;
                 align-items: center;
             }
+            .sidebar-nav {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
         }
         
-        /* Email Tooltip */
         .email-wrapper { position: relative; display: inline-block; }
         .copy-feedback {
             position: absolute;
@@ -400,13 +423,11 @@
 </head>
 <body>
 
-    <!-- Animation Layers (Hidden by default) -->
     <div id="network-container" class="animation-container"><canvas id="nodes-canvas"></canvas></div>
     <div id="flow-container" class="animation-container"><canvas id="flow-canvas"></canvas></div>
     <div id="snake-container" class="animation-container"></div>
 
     <div class="layout-wrapper">
-        <!-- Sidebar: Profile & Info -->
         <aside class="sidebar">
             <div class="profile-section">
                 <img src="images/profile.jpeg" alt="Defa Zhu" class="profile-img">
@@ -437,12 +458,20 @@
                         <a href="https://x.com/zhudefa" target="_blank">Twitter / X</a>
                     </li>
                 </ul>
+
+                <!-- ===== NEW: Sidebar Navigation ===== -->
+                <nav class="sidebar-nav">
+                    <a href="blog/" class="nav-link">
+                        <i class="fas fa-pen-nib"></i>
+                        Blog
+                    </a>
+                </nav>
+                <!-- ===== END NEW ===== -->
             </div>
 
             <div class="sidebar-footer">
                 <div>
                     <p>&copy; 2025 Defa Zhu</p>
-                    <!-- Busuanzi Counter (Click to Toggle) -->
                     <div class="visit-count masked" id="visit-toggle" title="Click to show/hide views">
                         <i class="fas fa-eye"></i>
                         <span class="visit-placeholder">Show Views</span>
@@ -452,7 +481,6 @@
                     </div>
                 </div>
                 
-                <!-- Minimal Controls -->
                 <div class="controls">
                     <button class="control-btn" id="theme-toggle" title="Toggle Theme">
                         <i class="fas fa-moon"></i>
@@ -464,9 +492,7 @@
             </div>
         </aside>
 
-        <!-- Main Content: Bio & Publications -->
         <main class="main-content">
-            <!-- About Section -->
             <section id="about">
                 <h2 class="section-title">About Me</h2>
                 <div class="bio-text">
@@ -474,11 +500,9 @@
                 </div>
             </section>
 
-            <!-- Publications Section -->
             <section id="publications">
                 <h2 class="section-title">Selected Publications</h2>
 
-                <!-- VWN -->
                 <div class="pub-item">
                     <a href="https://arxiv.org/pdf/2511.11238" target="_blank" class="pub-title">Virtual Width Networks</a>
                     <div class="pub-authors">
@@ -492,7 +516,6 @@
                     </div>
                 </div>
                 
-                <!-- Paper 1 -->
                 <div class="pub-item">
                     <a href="https://arxiv.org/pdf/2503.16057" target="_blank" class="pub-title">Expert Race: A Flexible Routing Strategy for Scaling Diffusion Transformer with Mixture of Experts</a>
                     <div class="pub-authors">Yike Yuan, Ziyu Wang, Zihao Huang, <strong>Defa Zhu</strong>, Xun Zhou, Jingyi Yu, Qiyang Min</div>
@@ -503,7 +526,6 @@
                     </div>
                 </div>
 
-                <!-- Paper 2 -->
                 <div class="pub-item">
                     <a href="https://arxiv.org/pdf/2503.14125" target="_blank" class="pub-title">Frac-Connections: Fractional Extension of Hyper-Connections</a>
                     <div class="pub-authors"><strong>Defa Zhu</strong>, Hongzhi Huang, Jundong Zhou, Zihao Huang, Yutao Zeng, Banggu Wu, Qiyang Min, Xun Zhou</div>
@@ -514,7 +536,6 @@
                     </div>
                 </div>
 
-                <!-- Paper 3 -->
                 <div class="pub-item">
                     <a href="https://arxiv.org/pdf/2501.16975" target="_blank" class="pub-title">Over-tokenized transformer: Vocabulary is generally worth scaling</a>
                     <div class="pub-authors">Hongzhi Huang, <strong>Defa Zhu</strong>, Banggu Wu, Yutao Zeng, Ya Wang, Qiyang Min, Xun Zhou</div>
@@ -525,7 +546,6 @@
                     </div>
                 </div>
 
-                <!-- Paper 4 -->
                 <div class="pub-item">
                     <a href="https://arxiv.org/pdf/2411.12364" target="_blank" class="pub-title">Ultra-Sparse Memory Network</a>
                     <div class="pub-authors">Zihao Huang, Qiyang Min, Hongzhi Huang, <strong>Defa Zhu</strong>, Yutao Zeng, Ran Guo, Xun Zhou</div>
@@ -536,7 +556,6 @@
                     </div>
                 </div>
 
-                <!-- Paper 5 -->
                 <div class="pub-item">
                     <a href="https://arxiv.org/pdf/2409.19606" target="_blank" class="pub-title">Hyper-Connections</a>
                     <div class="pub-authors"><strong>Defa Zhu</strong>, Hongzhi Huang, Zihao Huang, Yutao Zeng, Yunyao Mao, Banggu Wu, Qiyang Min, Xun Zhou</div>
@@ -552,14 +571,12 @@
     </div>
 
     <script>
-        // --- Configuration ---
         const CONFIG = {
-            animationEnabled: false, // Default OFF
-            currentAnimation: 'network', // Default type
+            animationEnabled: false,
+            currentAnimation: 'network',
             theme: localStorage.getItem('theme') || 'light'
         };
 
-        // --- DOM Elements ---
         const htmlEl = document.documentElement;
         const themeBtn = document.getElementById('theme-toggle');
         const animBtn = document.getElementById('animation-toggle');
@@ -567,30 +584,21 @@
         const copyMsg = document.getElementById('copy-msg');
         const visitToggle = document.getElementById('visit-toggle');
 
-        // --- Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
-            // Set Theme
             htmlEl.setAttribute('data-theme', CONFIG.theme);
             updateThemeIcon();
-
-            // Set Animation State
             updateAnimIcon();
             if (CONFIG.animationEnabled) {
                 startAnimation(CONFIG.currentAnimation);
             }
-
-            // Initialize Canvas Sizes
             resizeCanvases();
         });
 
-        // --- Theme Logic ---
         themeBtn.addEventListener('click', () => {
             const newTheme = htmlEl.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
             htmlEl.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
             updateThemeIcon();
-            
-            // If animation is running, update colors
             if (CONFIG.animationEnabled) {
                 updateAnimationColors();
             }
@@ -601,7 +609,6 @@
             themeBtn.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
         }
 
-        // --- Email Copy Logic ---
         emailLink.addEventListener('click', (e) => {
             e.preventDefault();
             const email = e.target.innerText;
@@ -611,18 +618,14 @@
             });
         });
 
-        // --- Visit Count Toggle Logic ---
         visitToggle.addEventListener('click', () => {
             visitToggle.classList.toggle('masked');
         });
 
-        // --- Animation Control Logic ---
         animBtn.addEventListener('click', () => {
             CONFIG.animationEnabled = !CONFIG.animationEnabled;
             updateAnimIcon();
-            
             if (CONFIG.animationEnabled) {
-                // Pick a random animation if turning on
                 const anims = ['network', 'flow', 'snake'];
                 CONFIG.currentAnimation = anims[Math.floor(Math.random() * anims.length)];
                 startAnimation(CONFIG.currentAnimation);
@@ -644,25 +647,20 @@
         }
 
         function startAnimation(type) {
-            stopAllAnimations(); // Clear others first
+            stopAllAnimations();
             const container = document.getElementById(`${type}-container`);
             if(container) container.classList.add('active');
-
             if (type === 'network') initNetwork();
             if (type === 'flow') initFlow();
             if (type === 'snake') initSnake();
         }
 
-        // --- Animation Implementations ---
-        
-        // 1. Network Animation
         let networkReqId;
         function initNetwork() {
             const canvas = document.getElementById('nodes-canvas');
             const ctx = canvas.getContext('2d');
             let nodes = [];
             const count = 60;
-
             for(let i=0; i<count; i++) {
                 nodes.push({
                     x: Math.random() * canvas.width,
@@ -671,25 +669,19 @@
                     vy: (Math.random() - 0.5) * 0.5
                 });
             }
-
             function draw() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 const color = getComputedStyle(htmlEl).getPropertyValue('--primary-color').trim();
-                
                 ctx.fillStyle = color;
                 ctx.strokeStyle = color;
-
                 nodes.forEach((node, i) => {
                     node.x += node.vx;
                     node.y += node.vy;
-
                     if(node.x < 0 || node.x > canvas.width) node.vx *= -1;
                     if(node.y < 0 || node.y > canvas.height) node.vy *= -1;
-
                     ctx.beginPath();
                     ctx.arc(node.x, node.y, 2, 0, Math.PI*2);
                     ctx.fill();
-
                     for(let j=i+1; j<nodes.length; j++) {
                         const dx = nodes[j].x - node.x;
                         const dy = nodes[j].y - node.y;
@@ -710,14 +702,12 @@
             draw();
         }
 
-        // 2. Flow Animation
         let flowReqId;
         function initFlow() {
             const canvas = document.getElementById('flow-canvas');
             const ctx = canvas.getContext('2d');
             const particles = [];
             const count = 100;
-
             for(let i=0; i<count; i++) {
                 particles.push({
                     x: Math.random() * canvas.width,
@@ -726,16 +716,13 @@
                     speed: Math.random() * 0.5 + 0.2
                 });
             }
-
             function draw() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 const color = getComputedStyle(htmlEl).getPropertyValue('--primary-color').trim();
                 ctx.fillStyle = color;
-
                 particles.forEach(p => {
                     p.y -= p.speed;
                     if(p.y < 0) p.y = canvas.height;
-                    
                     ctx.globalAlpha = Math.random() * 0.5 + 0.1;
                     ctx.beginPath();
                     ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
@@ -746,18 +733,15 @@
             draw();
         }
 
-        // 3. Snake Animation
         let snakeInterval;
         function initSnake() {
             const container = document.getElementById('snake-container');
             const size = 20;
             const cols = Math.floor(window.innerWidth / size);
             const rows = Math.floor(window.innerHeight / size);
-            
             let snake = [{x: 10, y: 10}, {x: 9, y: 10}, {x: 8, y: 10}];
             let dir = {x: 1, y: 0};
             let food = {x: 15, y: 10};
-
             function render() {
                 container.innerHTML = '';
                 snake.forEach((seg, i) => {
@@ -777,16 +761,13 @@
                 fEl.style.top = (food.y * size + 2) + 'px';
                 container.appendChild(fEl);
             }
-
             function update() {
                 const head = {x: snake[0].x + dir.x, y: snake[0].y + dir.y};
                 if(head.x < 0) head.x = cols-1;
                 if(head.x >= cols) head.x = 0;
                 if(head.y < 0) head.y = rows-1;
                 if(head.y >= rows) head.y = 0;
-
                 snake.unshift(head);
-
                 if(head.x === food.x && head.y === food.y) {
                     food = {
                         x: Math.floor(Math.random() * cols),
@@ -797,7 +778,6 @@
                 }
                 render();
             }
-
             function aiMove() {
                 if(food.x > snake[0].x && dir.x !== -1) dir = {x: 1, y: 0};
                 else if(food.x < snake[0].x && dir.x !== 1) dir = {x: -1, y: 0};
@@ -805,11 +785,9 @@
                 else if(food.y < snake[0].y && dir.y !== 1) dir = {x: 0, y: -1};
                 update();
             }
-
             snakeInterval = setInterval(aiMove, 100);
         }
 
-        // --- Utilities ---
         function resizeCanvases() {
             const w = window.innerWidth;
             const h = window.innerHeight;
@@ -827,7 +805,6 @@
         }
 
         window.addEventListener('resize', resizeCanvases);
-
     </script>
 </body>
 </html>

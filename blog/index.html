@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - zhudefa</title>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --card-bg: #161b22;
+            --border: #30363d;
+            --text: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent: #58a6ff;
+            --accent-hover: #79c0ff;
+            --tag-bg: #1f6feb33;
+            --tag-text: #58a6ff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        header {
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        header .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        header nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            margin-left: 1.5rem;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+
+        header nav a:hover,
+        header nav a.active {
+            color: var(--accent);
+        }
+
+        /* Language Toggle */
+        .lang-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1000;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .lang-toggle button {
+            padding: 0.4rem 0.9rem;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .lang-toggle button.active {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        /* Main Content */
+        main {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-desc {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: 1.05rem;
+        }
+
+        /* Post Card */
+        .post-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .post-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.5rem;
+            transition: border-color 0.2s, transform 0.2s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .post-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .post-card .post-date {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.4rem;
+        }
+
+        .post-card .post-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--accent);
+        }
+
+        .post-card .post-excerpt {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .post-card .post-tags {
+            margin-top: 0.8rem;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .post-card .tag {
+            background: var(--tag-bg);
+            color: var(--tag-text);
+            padding: 0.15rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 1rem;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+            margin-top: 3rem;
+            max-width: 960px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        @media (max-width: 600px) {
+            header { flex-direction: column; gap: 0.8rem; }
+            header nav a { margin-left: 1rem; }
+            main { padding: 1.2rem; }
+            .page-title { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="lang-toggle">
+    <button id="btn-zh" class="active" onclick="switchLang('zh')">中文</button>
+    <button id="btn-en" onclick="switchLang('en')">EN</button>
+</div>
+
+<header>
+    <a href="/" class="logo">zhudefa</a>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/blog/" class="active">Blog</a>
+    </nav>
+</header>
+
+<main>
+    <h1 class="page-title">
+        <span class="lang-zh">博客</span>
+        <span class="lang-en" style="display:none;">Blog</span>
+    </h1>
+    <p class="page-desc">
+        <span class="lang-zh">记录想法与技术分享</span>
+        <span class="lang-en" style="display:none;">Thoughts and technical sharing</span>
+    </p>
+
+    <div class="post-list">
+        <!--
+            =============================================
+            在这里添加新博文卡片，最新的放最上面。
+            复制下面的 post-card 模板，修改内容即可。
+            =============================================
+        -->
+
+        <!-- === 最新博文：碳与硅 === -->
+        <a class="post-card" href="posts/c_and_si.html">
+            <div class="post-date">2026-02-27</div>
+            <div class="post-title">
+                <span class="lang-zh">碳与硅，人与神</span>
+                <span class="lang-en" style="display:none;">Carbon and Silicon, Man and God</span>
+            </div>
+            <div class="post-excerpt">
+                <span class="lang-zh">关于碳基生命向硅基生命演化的终极预言与反思。</span>
+                <span class="lang-en" style="display:none;">A final prophecy and reflection on the transition from carbon-based to silicon-based life.</span>
+            </div>
+            <div class="post-tags">
+                <span class="tag">哲学</span>
+                <span class="tag">未来</span>
+            </div>
+        </a>
+
+        <!-- === 示例博文 1 === -->
+        <a class="post-card" href="posts/2026-02-27-my-first-post.html">
+            <div class="post-date">2026-02-27</div>
+            <div class="post-title">
+                <span class="lang-zh">我的第一篇博文</span>
+                <span class="lang-en" style="display:none;">My First Blog Post</span>
+            </div>
+            <div class="post-excerpt">
+                <span class="lang-zh">这是我的第一篇博客文章，记录建站过程与心得体会。</span>
+                <span class="lang-en" style="display:none;">This is my first blog post, documenting the process of building this site.</span>
+            </div>
+            <div class="post-tags">
+                <span class="tag">Blog</span>
+                <span class="tag">GitHub Pages</span>
+            </div>
+        </a>
+
+        <!-- === 示例博文 2（演示用，可删除） === -->
+        <a class="post-card" href="posts/2026-02-28-hello-world.html">
+            <div class="post-date">2026-02-28</div>
+            <div class="post-title">
+                <span class="lang-zh">Hello World 技术笔记</span>
+                <span class="lang-en" style="display:none;">Hello World Tech Notes</span>
+            </div>
+            <div class="post-excerpt">
+                <span class="lang-zh">一些关于编程和技术的随笔记录。</span>
+                <span class="lang-en" style="display:none;">Some casual notes about programming and technology.</span>
+            </div>
+            <div class="post-tags">
+                <span class="tag">Tech</span>
+                <span class="tag">Notes</span>
+            </div>
+        </a>
+
+    </div>
+</main>
+
+<footer>
+    <span class="lang-zh">© 2026 zhudefa. 保留所有权利。</span>
+    <span class="lang-en" style="display:none;">© 2026 zhudefa. All rights reserved.</span>
+</footer>
+
+<script>
+    function switchLang(lang) {
+        const zhEls = document.querySelectorAll('.lang-zh');
+        const enEls = document.querySelectorAll('.lang-en');
+
+        if (lang === 'en') {
+            zhEls.forEach(el => el.style.display = 'none');
+            enEls.forEach(el => el.style.display = '');
+            document.getElementById('btn-zh').classList.remove('active');
+            document.getElementById('btn-en').classList.add('active');
+            document.documentElement.lang = 'en';
+        } else {
+            zhEls.forEach(el => el.style.display = '');
+            enEls.forEach(el => el.style.display = 'none');
+            document.getElementById('btn-en').classList.remove('active');
+            document.getElementById('btn-zh').classList.add('active');
+            document.documentElement.lang = 'zh';
+        }
+
+        // 通过 URL hash 记住语言偏好
+        window.location.hash = lang;
+    }
+
+    // 页面加载时读取 hash
+    window.addEventListener('DOMContentLoaded', () => {
+        const hash = window.location.hash.replace('#', '');
+        if (hash === 'en') switchLang('en');
+    });
+</script>
+
+</body>
+</html>
